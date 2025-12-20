@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand colors: #6f1322 (Burgundy Red) */
+    --background: 0 0% 99%;
+    --foreground: 0 5% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 5% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 5% 10%;
+    --primary: 351 70% 25%; /* #6f1322 - Deep burgundy */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 351 20% 96%; /* Light blush */
+    --secondary-foreground: 351 70% 25%;
+    --muted: 0 0% 96.5%;
+    --muted-foreground: 0 5% 45%;
+    --accent: 351 50% 40%; /* Lighter burgundy for accents */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 92%;
+    --input: 0 0% 92%;
+    --ring: 351 70% 25%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 0 5% 8%;
+    --foreground: 0 0% 98%;
+    --card: 0 5% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 5% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 351 80% 45%; /* Brighter burgundy for dark mode */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 351 20% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 5% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 351 60% 50%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 5% 20%;
+    --input: 0 5% 20%;
+    --ring: 351 80% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Page transitions */
+  .page-transition {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,0 +1,52 @@
+Options -MultiViews
+DirectoryIndex disabled
+PassengerEnabled on
+PassengerAppType node
+PassengerAppRoot /home/wealthholdingeg/landing-api
+PassengerBaseURI /api
+PassengerStartupFile dist/index.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/wealthholdingeg/landing-api"
+PassengerBaseURI "/api"
+PassengerNodejs "/home/wealthholdingeg/nodevenv/landing-api/22/bin/node"
+PassengerAppType node
+PassengerStartupFile dist/index.js
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+# =========================
+# ROOT .htaccess (React + Passenger API)
+# Location: /home/wealthholdingeg/new.wealthholding-eg.com/.htaccess
+# =========================
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # -------------------------
+  # Force HTTPS
+  # -------------------------
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # -------------------------------------------------
+  # IMPORTANT: Do NOT rewrite or redirect /api requests
+  # Passenger (Node.js App) will handle /api/*
+  # -------------------------------------------------
+  RewriteCond %{REQUEST_URI} ^/api [NC]
+  RewriteRule ^ - [L]
+  # -------------------------
+  # React Router (SPA)
+  # -------------------------
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ /index.html [L]
+</IfModule>
+# -------------------------
+# Security Headers
+# -------------------------
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+# -------------------------
+# Protect sensitive files
+# -------------------------
+<FilesMatch "(\.env|package\.json|package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$">
+  Require all denied
+</FilesMatch>
