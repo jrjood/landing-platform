@@ -284,7 +284,9 @@ async function seed() {
     ];
 
     for (const lead of leads) {
-      const projectId = lead.projectSlug ? slugToId[lead.projectSlug] || null : null;
+      const projectId = lead.projectSlug
+        ? slugToId[lead.projectSlug] || null
+        : null;
       await pool.query(
         `INSERT INTO leads (name, phone, email, job_title, preferred_contact_way, unit_type, message, projectId, status)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
