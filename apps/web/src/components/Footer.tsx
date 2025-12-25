@@ -141,12 +141,15 @@ export function Footer() {
               Contact Us
             </h4>
             <ul className='space-y-3'>
-              <li className='flex items-start gap-3 text-sm text-muted-foreground group'>
+              <li className='flex items-start gap-3 text-sm   group'>
                 <MapPin className='h-5 w-5 flex-shrink-0 mt-0.5 group-hover:text-primary transition-colors' />
-                <span>
+                <a
+                  href='#'
+                  className='text-muted-foreground hover:text-primary transition-colors'
+                >
                   Ground Floor, 235 Office Building - Section 2, N Teseen, New
                   Cairo 1, Cairo, Egypt
-                </span>
+                </a>
               </li>
 
               <li className='flex items-center gap-3 text-sm group'>

@@ -6,7 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/pages/project/HeroSection';
 import { ProjectDetailsSection } from '@/pages/project/ProjectDetailsSection';
-import { HighlightsAndLocationSection } from '@/pages/project/HighlightsAndLocationSection';
+
+import { Location } from '@/pages/project/Location';
 import { GallerySection } from '@/pages/project/GallerySection';
 import { ContactSection } from '@/pages/project/ContactSection';
 import { toast } from 'sonner';
@@ -76,8 +77,8 @@ export function ProjectPage() {
       <div className='min-h-screen bg-background page-transition'>
         <HeroSection project={project} />
         <ProjectDetailsSection project={project} />
-        <HighlightsAndLocationSection project={project} />
         <GallerySection images={project.gallery} />
+        <Location project={project} />
         <ContactSection project={project} />
         <Footer />
       </div>

@@ -37,7 +37,7 @@ export function AdminProjectsPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -132,16 +132,16 @@ export function AdminProjectsPage() {
       }
 
       const projectData = {
-        title,
+        name: title,
         slug,
-        subtitle,
+        tagline: subtitle,
         description,
         heroImage,
         mapEmbedUrl,
         highlights: highlightsText ? JSON.parse(highlightsText) : [],
         gallery,
         videoUrl: videoUrl || undefined,
-        location,
+        locationText: location,
         type,
         status,
         phone: '+20 112 189 8883',
@@ -155,12 +155,22 @@ export function AdminProjectsPage() {
         faqs: [],
       };
 
+      // console.log('Project data being sent:', projectData);
       if (editingProject) {
-        await updateProject(token!, editingProject.id, projectData);
+        await updateProject(token!, editingProject.slug, projectData);
         toast.success('Project updated successfully');
       } else {
-        await createProject(token!, projectData);
-        toast.success('Project created successfully');
+        try {
+          await createProject(token!, projectData);
+          toast.success('Project created successfully');
+        } catch (err: any) {
+          if (err && err.message) {
+            console.error('Create project error:', err.message);
+          } else {
+            console.error('Create project error:', err);
+          }
+          throw err;
+        }
       }
 
       setIsDialogOpen(false);
@@ -173,13 +183,13 @@ export function AdminProjectsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      setDeletingId(id);
-      await deleteProject(token!, id);
-      setProjects(projects.filter((p) => p.id !== id));
+      setDeletingId(slug);
+      await deleteProject(token!, slug);
+      setProjects(projects.filter((p) => p.slug !== slug));
       toast.success('Project deleted successfully');
     } catch (error) {
       toast.error('Failed to delete project');
@@ -198,11 +208,11 @@ export function AdminProjectsPage() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen  '>
       {/* Header */}
-      <div className='bg-white border-b'>
+      <div className='  border-b'>
         <div className='container mx-auto px-4 py-4 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold text-gray-900'>Admin Dashboard</h1>
+          <h1 className='text-2xl font-bold text-white'>Admin Dashboard</h1>
           <div className='flex items-center gap-4'>
             <Button variant='outline' onClick={() => navigate('/admin/leads')}>
               Leads
@@ -239,7 +249,7 @@ export function AdminProjectsPage() {
                 {projects.map((project) => (
                   <div
                     key={project.id}
-                    className='flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50'
+                    className='flex items-center gap-4 p-4 border rounded-lg hover:bg-stone-800'
                   >
                     <img
                       src={project.heroImage}
@@ -248,10 +258,10 @@ export function AdminProjectsPage() {
                     />
                     <div className='flex-1'>
                       <h3 className='font-semibold text-lg'>{project.title}</h3>
-                      <p className='text-sm text-gray-600'>
+                      <p className='text-sm text-stone-400'>
                         {project.subtitle}
                       </p>
-                      <div className='flex gap-4 mt-2 text-xs text-gray-500'>
+                      <div className='flex gap-4 mt-2 text-xs text-stone-500'>
                         <span>{project.location}</span>
                         <span>•</span>
                         <span>{project.type}</span>
@@ -279,10 +289,10 @@ export function AdminProjectsPage() {
                       <Button
                         variant='ghost'
                         size='sm'
-                        onClick={() => handleDelete(project.id)}
-                        disabled={deletingId === project.id}
+                        onClick={() => handleDelete(project.slug)}
+                        disabled={deletingId === project.slug}
                       >
-                        {deletingId === project.id ? (
+                        {deletingId === project.slug ? (
                           <Loader2 className='w-4 h-4 animate-spin' />
                         ) : (
                           <Trash2 className='w-4 h-4 text-red-500' />

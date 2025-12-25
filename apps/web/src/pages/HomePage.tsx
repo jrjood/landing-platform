@@ -54,20 +54,18 @@ export function HomePage() {
   }
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className='min-h-screen  '>
       {/* Hero Section */}
-      <section className='relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-burgundy/20 to-gray-900'>
+      <section className='relative  h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-burgundy/20 to-gray-900'>
         {/* Background Image */}
         <div
-          className='absolute inset-0 z-0'
+          className=' [filter:blur(30px)_saturate(120%)]
+    scale-105 absolute inset-0 z-0 bg-no-repeat bg-cover bg-center'
           style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1649700410676-44e577354d3a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundImage: 'url(/home-hero-bg.jpg)',
           }}
         >
-          <div className='absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-burgundy/40' />
+          <div className='absolute inset-0 bg-black/40' />
         </div>
 
         {/* Content */}
@@ -87,19 +85,19 @@ export function HomePage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className='mb-8 flex items-center justify-center gap-4'
               >
-                <div className='h-20 w-20 flex items-center justify-center '>
+                <div className='h-52 w-52 flex items-center justify-center '>
                   <img
                     src='/icon_Wealth.png'
                     alt='Wealth Holding'
-                    className='h-20 w-20 object-contain'
+                    className='h-52 w-52 object-contain'
                   />
                 </div>
-                <div className='uppercase flex flex-col items-start'>
+                {/* <div className='uppercase flex flex-col items-start'>
                   <h1 className='text-2xl font-bold text-white'>
                     Wealth Holding
                   </h1>
                   <p className='text-gray-300'>Developments</p>
-                </div>
+                </div> */}
               </motion.div>
 
               <motion.h2
@@ -115,7 +113,7 @@ export function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className='text-xl text-gray-300 mb-8 leading-relaxed'
+                className='text-xl text-stone-300 mb-8 leading-relaxed'
               >
                 Discover exceptional real estate projects that redefine luxury
                 living and investment opportunities in Egypt's most prestigious
@@ -130,7 +128,7 @@ export function HomePage() {
               >
                 <Button
                   size='lg'
-                  className=' backdrop-blur-md bg-transparent border-2 text-white px-8 py-6 text-lg group hover:bg-transparent'
+                  className=' bg-white/10   hover:!text-white   px-8 py-6 text-lg transition-all hover:bg-white/20 '
                   onClick={() => {
                     document
                       .getElementById('projects')
@@ -140,17 +138,17 @@ export function HomePage() {
                   Explore Projects
                   <ArrowDown className='ml-2 w-5 h-5 group-hover:animate-pulse group-hover:translate-y-0.5 transition-transform' />
                 </Button>
-                <Button
+                {/* <Button
                   size='lg'
-                  className='!border-2 border-white !text-black bg-white hover:!bg-[#6f1322cc] hover:!text-white hover:border-[#6f1322cc] px-8 py-6 text-lg transition-all'
+                  className='!border-2 border-primary/30  bg-primary/30   hover:!text-white   px-8 py-6 text-lg transition-all hover:border-primary'
                   onClick={() => window.open('tel:19640')}
                 >
                   Call Us: 19640
-                </Button>
+                </Button> */}
               </motion.div>
 
               {/* Stats */}
-              <motion.div
+              {/*  <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
@@ -174,7 +172,7 @@ export function HomePage() {
                   </div>
                   <div className='text-gray-300'>Happy Clients</div>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
           </div>
         </div>
@@ -201,7 +199,7 @@ export function HomePage() {
       </section>
 
       {/* Projects Section */}
-      <section id='projects' className='py-24 bg-white'>
+      <section id='projects' className='py-24 bg-muted'>
         <div className='container mx-auto px-4'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -210,10 +208,10 @@ export function HomePage() {
             transition={{ duration: 0.6 }}
             className='text-center mb-16'
           >
-            <h2 className='text-4xl md:text-5xl font-bold mb-4 text-gray-900'>
+            <h2 className='text-4xl md:text-5xl font-bold mb-4  '>
               Our Projects
             </h2>
-            <p className='text-xl text-gray-600 max-w-2xl mx-auto'>
+            <p className='text-xl text-stone-400 max-w-2xl mx-auto'>
               Explore our portfolio of exceptional real estate developments
             </p>
           </motion.div>
@@ -228,7 +226,7 @@ export function HomePage() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
                 <Link to={`/${project.slug}`}>
-                  <Card className='group overflow-hidden hover:shadow-xl transition-all duration-300 border-2 hover:border-burgundy/20'>
+                  <Card className='group overflow-hidden hover:shadow-xl transition-all duration-300  '>
                     <div className='relative h-64 overflow-hidden'>
                       <img
                         src={project.heroImage}
@@ -246,10 +244,10 @@ export function HomePage() {
                       <h3 className='text-2xl font-bold mb-2 group-hover:text-burgundy transition-colors'>
                         {project.title}
                       </h3>
-                      <p className='text-gray-600 mb-4 line-clamp-2'>
+                      <p className='text-stone-600 mb-4 line-clamp-2'>
                         {project.subtitle}
                       </p>
-                      <div className='flex items-center gap-4 text-sm text-gray-500'>
+                      <div className='flex items-center gap-4 text-sm text-stone-500'>
                         <div className='flex items-center gap-1'>
                           <MapPin className='w-4 h-4' />
                           <span>{project.location}</span>

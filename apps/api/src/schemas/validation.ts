@@ -42,15 +42,11 @@ export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
 
 // Project update schema (admin)
 export const updateProjectSchema = z.object({
+  slug: z.string().min(1).max(255).optional(),
   name: z.string().min(1).max(255).optional(),
   tagline: z.string().min(1).max(500).optional(),
   description: z.string().min(1).optional(),
-  locationText: z.string().min(1).max(255).optional(),
-  mapEmbedUrl: z.string().optional(),
-  deliveryDate: z.string().min(1).max(100).optional(),
-  paymentPlan: z.string().min(1).optional(),
-  startingPrice: z.string().min(1).max(100).optional(),
-  highlights: z.array(z.string()).optional(),
+  heroImage: z.string().optional(),
   gallery: z
     .array(
       z.object({
@@ -59,6 +55,23 @@ export const updateProjectSchema = z.object({
       })
     )
     .optional(),
+  videoUrl: z.string().optional(),
+  mapEmbedUrl: z.string().optional(),
+  highlights: z.array(z.string()).optional(),
+  locationText: z.string().min(1).max(255).optional(),
+  location: z.string().optional(),
+  type: z.string().optional(),
+  status: z.string().optional(),
+  phone: z.string().optional(),
+  whatsapp: z.string().optional(),
+  email: z.string().optional(),
+  facebook: z.string().optional(),
+  instagram: z.string().optional(),
+  youtube: z.string().optional(),
+  linkedin: z.string().optional(),
+  deliveryDate: z.string().min(1).max(100).optional(),
+  paymentPlan: z.string().min(1).optional(),
+  startingPrice: z.string().min(1).max(100).optional(),
   faqs: z
     .array(
       z.object({

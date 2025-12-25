@@ -2,34 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'IvyPrestoHeadline';
+  src: url('./assets/fonts/ivy-presto-headline-semi-bold.otf')
+    format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IvyPrestoHeadline-thin';
+  src: url('./assets/fonts/ivy-presto-headline-thin.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    /* Brand colors: #6f1322 (Burgundy Red) */
-    --background: 0 0% 99%;
-    --foreground: 0 5% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 5% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 5% 10%;
-    --primary: 351 70% 25%; /* #6f1322 - Deep burgundy */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 351 20% 96%; /* Light blush */
-    --secondary-foreground: 351 70% 25%;
-    --muted: 0 0% 96.5%;
-    --muted-foreground: 0 5% 45%;
-    --accent: 351 50% 40%; /* Lighter burgundy for accents */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 92%;
-    --input: 0 0% 92%;
-    --ring: 351 70% 25%;
-    --radius: 0.75rem;
-  }
-
-  .dark {
+    /* Brand colors: #cc000a (Red) */
     --background: 0 5% 8%;
     --foreground: 0 0% 98%;
+    /* --foreground: 43, 100%, 49%; */
     --card: 0 5% 10%;
     --card-foreground: 0 0% 98%;
     --popover: 0 5% 10%;
@@ -47,7 +42,53 @@
     --border: 0 5% 20%;
     --input: 0 5% 20%;
     --ring: 351 80% 45%;
+    --radius: 0.3rem;
+    --gold: 43, 100%, 49%;
+
+    /* Gold gradient stops (tweak these HSL values until it matches your logo) */
+    --gold-1: 46 95% 72%; /* bright highlight */
+    --gold-2: 44 90% 55%; /* mid gold */
+    --gold-3: 42 85% 38%; /* deep gold/shadow */
+    --gold-4: 47 96% 78%; /* final highlight */
   }
+
+  .light {
+    --background: 0 0% 99%;
+    /* --foreground: 0 5% 10%; */
+    --foreground: 357 100% 40%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 5% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 5% 10%;
+    --primary: 357 100% 40%; /* #cc000a */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 357 30% 98%; /* lighter tint for light mode */
+    --secondary-foreground: 357 100% 40%;
+    --muted: 0 0% 96.5%;
+    --muted-foreground: 0 5% 45%;
+    --accent: 357 80% 55%; /* lighter accent of #cc000a */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 92%;
+    --input: 0 0% 92%;
+    --ring: 357 100% 40%;
+    --radius: 0.3rem;
+    --gold: 43, 100%, 49%;
+
+    /* Gold gradient stops (tweak these HSL values until it matches your logo) */
+    --gold-1: 46 95% 72%; /* bright highlight */
+    --gold-2: 44 90% 55%; /* mid gold */
+    --gold-3: 42 85% 38%; /* deep gold/shadow */
+    --gold-4: 47 96% 78%; /* final highlight */
+  }
+}
+
+h2 {
+  text-transform: uppercase;
+  font-family: 'IvyPrestoHeadline', serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @layer base {
@@ -77,4 +118,44 @@
       transform: translateY(0);
     }
   }
+}
+
+.hero-glow {
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Three soft "blobs" */
+  background: radial-gradient(
+      closest-side at 28% 42%,
+      rgba(255, 70, 70, 0.7),
+      transparent 62%
+    ),
+    radial-gradient(
+      closest-side at 76% 55%,
+      rgba(150, 0, 0, 0.65),
+      transparent 60%
+    ),
+    radial-gradient(
+      closest-side at 55% 82%,
+      rgba(255, 0, 60, 0.45),
+      transparent 64%
+    );
+
+  /* The "soft glow" look */
+  filter: blur(28px) saturate(120%);
+  transform: translate3d(0, 0, 0);
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 35%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
 }

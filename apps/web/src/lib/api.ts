@@ -163,10 +163,10 @@ export const createProject = async (
 
 export const updateProject = async (
   token: string,
-  id: number,
+  slug: string,
   project: Partial<Project>
 ): Promise<Project> => {
-  const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+  const response = await fetch(`${API_URL}/admin/projects/${slug}`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -183,9 +183,9 @@ export const updateProject = async (
 
 export const deleteProject = async (
   token: string,
-  id: number
+  slug: string
 ): Promise<void> => {
-  const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+  const response = await fetch(`${API_URL}/admin/projects/${slug}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,

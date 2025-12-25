@@ -204,7 +204,14 @@ async function seed() {
 
     console.log('✅ Projects seeded (3 projects)');
 
-    // Insert sample leads
+    // Fetch project IDs by slug
+    const [projectRows] = await pool.query('SELECT id, slug FROM projects');
+    const slugToId: Record<string, number> = {};
+    for (const row of projectRows as any[]) {
+      slugToId[row.slug] = row.id;
+    }
+
+    // Insert sample leads using projectSlug
     const leads = [
       {
         name: 'Ahmed Hassan',
@@ -213,7 +220,7 @@ async function seed() {
         job_title: 'Business Owner',
         preferred_contact_way: 'call',
         unit_type: 'Office Space',
-        projectId: 1,
+        projectSlug: 'cairo-business-plaza',
         status: 'new',
         message: 'Interested in commercial office spaces. Please contact me.',
       },
@@ -224,7 +231,7 @@ async function seed() {
         job_title: 'Doctor',
         preferred_contact_way: 'whatsapp',
         unit_type: 'Apartment',
-        projectId: 2,
+        projectSlug: 'nile-view-residence',
         status: 'qualified',
         message: 'Looking for a 3-bedroom apartment with Nile view.',
       },
@@ -235,7 +242,7 @@ async function seed() {
         job_title: 'Investor',
         preferred_contact_way: 'call',
         unit_type: 'Villa',
-        projectId: 3,
+        projectSlug: 'alexandria-coastal-resort',
         status: 'new',
         message: 'Interested in vacation home investment opportunities.',
       },
@@ -246,7 +253,7 @@ async function seed() {
         job_title: 'Retail Manager',
         preferred_contact_way: 'whatsapp',
         unit_type: 'Retail Space',
-        projectId: 1,
+        projectSlug: 'cairo-business-plaza',
         status: 'new',
         message:
           'Need information about retail space availability and pricing.',
@@ -258,7 +265,7 @@ async function seed() {
         job_title: 'CEO',
         preferred_contact_way: 'whatsapp',
         unit_type: 'Penthouse',
-        projectId: 2,
+        projectSlug: 'nile-view-residence',
         status: 'qualified',
         message:
           'Prefer to be contacted via WhatsApp. Interested in penthouse units.',
@@ -270,13 +277,14 @@ async function seed() {
         job_title: 'Unknown',
         preferred_contact_way: 'call',
         unit_type: null,
-        projectId: null,
+        projectSlug: null,
         status: 'spam',
         message: 'Testing 123... please ignore this inquiry.',
       },
     ];
 
     for (const lead of leads) {
+      const projectId = lead.projectSlug ? slugToId[lead.projectSlug] || null : null;
       await pool.query(
         `INSERT INTO leads (name, phone, email, job_title, preferred_contact_way, unit_type, message, projectId, status)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -288,7 +296,7 @@ async function seed() {
           lead.preferred_contact_way,
           lead.unit_type,
           lead.message,
-          lead.projectId,
+          projectId,
           lead.status,
         ]
       );

@@ -51,7 +51,7 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
       </div>
 
       {/* Desktop: Accordion */}
-      <div className='hidden md:flex h-[600px] gap-2 overflow-hidden rounded-xl'>
+      <div className='hidden md:flex h-[400px] gap-2 overflow-hidden rounded-xl'>
         {images.map((image, index) => (
           <div
             key={index}
@@ -62,7 +62,7 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
               hoveredIndex === null
                 ? 'flex-1'
                 : hoveredIndex === index
-                ? 'flex-[3]'
+                ? 'flex-[1]'
                 : 'flex-[0.5]'
             }`}
           >

@@ -35,11 +35,12 @@ export function ContactSection({ project }: ContactSectionProps) {
           <div
             className='lg:col-span-2 space-y-8 rounded-r-2xl p-8 relative overflow-hidden flex flex-col max-lg:rounded-b-2xl max-lg:rounded-t-none '
             style={{
-              backgroundImage: `linear-gradient(rgba(111, 19, 34, 0.85), rgba(111, 19, 34, 0.9)), url(${
-                project.gallery[1]?.url ||
-                project.gallery[0]?.url ||
-                project.heroImage
-              })`,
+              backgroundImage: ` linear-gradient(
+    hsl(var(--primary) / 0.85),
+    hsl(var(--primary) / 1)
+  ), url(${
+    project.gallery[1]?.url || project.gallery[0]?.url || project.heroImage
+  })`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}

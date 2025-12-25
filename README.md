@@ -1,3 +1,5 @@
+docker compose up -d --build
+
 # Landing Platform - Subdomain Real Estate Projects
 
 A complete production-ready monorepo for a subdomain landing platform with 3 project landing pages, lead capture, and an admin dashboard to manage leads and project content.
