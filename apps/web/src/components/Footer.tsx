@@ -206,9 +206,19 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className='border-t py-6'>
           <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
-            <p className='text-sm text-muted-foreground text-center sm:text-left'>
-              &copy; 2026 Wealth Holding Developments. All rights reserved.
-            </p>
+            <div className='flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left'>
+              <p className='text-sm text-muted-foreground'>
+                &copy; 2026 Wealth Holding Developments. All rights reserved.
+              </p>
+              <a
+                href='https://portfolio-webpage-jrd.vercel.app/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-sm  font-semibold text-red-500 hover:text-primary transition-colors'
+              >
+                Developer & Designer - JoDev
+              </a>
+            </div>
             <div className='flex gap-6'>
               <a
                 href='/terms'

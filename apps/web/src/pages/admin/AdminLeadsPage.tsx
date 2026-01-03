@@ -200,7 +200,9 @@ export function AdminLeadsPage() {
       {/* Header */}
       <div className='  border-b'>
         <div className='container mx-auto px-4 py-4 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold text-white'>Admin Dashboard</h1>
+          <h1 className='text-2xl font-bold text-card-foreground'>
+            Admin Dashboard
+          </h1>
           <div className='flex items-center gap-4'>
             <Button
               variant='outline'

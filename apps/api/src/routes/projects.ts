@@ -11,31 +11,41 @@ interface Project extends RowDataPacket {
   subtitle: string;
   description: string;
   heroImage: string;
+  heroImageMobile: string | null;
+  aboutImage: string | null;
+  masterplanImage: string | null;
+  caption1: string | null;
+  caption2: string | null;
+  caption3: string | null;
   gallery: string;
-  videoUrl: string | null;
+  brochureUrl: string | null;
   mapEmbedUrl: string | null;
-  highlights: string;
   location: string;
   type: string;
   status: string;
-  phone: string;
-  whatsapp: string;
-  email: string;
-  facebook: string | null;
-  instagram: string | null;
-  youtube: string | null;
-  linkedin: string | null;
-  faqs: string;
   created_at: Date;
   updated_at: Date;
+  videos?: ProjectVideo[];
+}
+
+interface ProjectVideo extends RowDataPacket {
+  id: number;
+  projectId: number;
+  title: string;
+  category: string | null;
+  thumbnailUrl: string;
+  videoUrl: string;
+  description: string | null;
+  aspectRatio: string | null;
+  sortOrder: number | null;
 }
 
 function parseProjectJson(project: Project) {
   return {
     ...project,
     gallery: JSON.parse(project.gallery || '[]'),
-    highlights: JSON.parse(project.highlights || '[]'),
-    faqs: JSON.parse(project.faqs || '[]'),
+    brochureUrl: project.brochureUrl,
+    videos: [] as ProjectVideo[],
   };
 }
 
@@ -47,6 +57,26 @@ router.get('/', async (req, res) => {
     );
 
     const projects = rows.map(parseProjectJson);
+
+    const projectIds = projects.map((p) => p.id);
+    if (projectIds.length) {
+      const [videoRows] = await pool.query<ProjectVideo[]>(
+        'SELECT * FROM project_videos WHERE projectId IN (?) ORDER BY sortOrder ASC, id ASC',
+        [projectIds]
+      );
+
+      const videosByProject = new Map<number, ProjectVideo[]>();
+      videoRows.forEach((video) => {
+        const list = videosByProject.get(video.projectId) || [];
+        list.push(video);
+        videosByProject.set(video.projectId, list);
+      });
+
+      projects.forEach((project) => {
+        project.videos = videosByProject.get(project.id) || [];
+      });
+    }
+
     res.json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -70,6 +100,14 @@ router.get('/:slug', async (req, res) => {
     }
 
     const project = parseProjectJson(rows[0]);
+
+    const [videoRows] = await pool.query<ProjectVideo[]>(
+      'SELECT * FROM project_videos WHERE projectId = ? ORDER BY sortOrder ASC, id ASC',
+      [project.id]
+    );
+
+    project.videos = videoRows;
+
     res.json(project);
   } catch (error) {
     console.error('Error fetching project:', error);

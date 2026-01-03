@@ -24,24 +24,38 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `subtitle` VARCHAR(500) NOT NULL,
   `description` TEXT NOT NULL,
   `heroImage` TEXT NOT NULL,
+  `heroImageMobile` TEXT,
+  `aboutImage` TEXT,
+  `masterplanImage` TEXT,
+  `caption1` TEXT,
+  `caption2` TEXT,
+  `caption3` TEXT,
   `gallery` TEXT NOT NULL COMMENT 'JSON array of {url, alt} objects',
-  `videoUrl` TEXT,
+  `brochureUrl` TEXT,
   `mapEmbedUrl` TEXT COMMENT 'Google Maps embed URL',
-  `highlights` TEXT COMMENT 'JSON array of highlight strings',
   `location` VARCHAR(255) NOT NULL,
   `type` VARCHAR(100) NOT NULL,
   `status` VARCHAR(100) NOT NULL,
-  `phone` VARCHAR(50) NOT NULL,
-  `whatsapp` VARCHAR(50) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `facebook` TEXT,
-  `instagram` TEXT,
-  `youtube` TEXT,
-  `linkedin` TEXT,
-  `faqs` TEXT NOT NULL COMMENT 'JSON array of {question, answer}',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Project Videos Table
+CREATE TABLE IF NOT EXISTS `project_videos` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `projectId` INT UNSIGNED NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `category` VARCHAR(100) DEFAULT '',
+  `thumbnailUrl` TEXT NOT NULL,
+  `videoUrl` TEXT NOT NULL,
+  `description` TEXT,
+  `aspectRatio` VARCHAR(50) DEFAULT NULL,
+  `sortOrder` INT DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_projectId` (`projectId`),
+  CONSTRAINT `fk_project_videos_project` FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Leads Table

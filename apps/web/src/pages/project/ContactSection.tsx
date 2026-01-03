@@ -9,9 +9,9 @@ interface ContactSectionProps {
 
 export function ContactSection({ project }: ContactSectionProps) {
   return (
-    <section id='contact-form' className='bg-muted py-14'>
+    <section id='contact-form' className='panel bg-muted py-14  '>
       <div className='container mx-auto px-4'>
-        <h2 className='mb-12 text-center text-4xl font-bold'>Get in Touch</h2>
+        <h2 className='mb-6 text-center text-4xl font-bold'>Get in Touch</h2>
 
         <div className='grid gap-0 lg:grid-cols-5 lg:items-stretch'>
           {/* Right Side - Contact Form */}
@@ -36,7 +36,7 @@ export function ContactSection({ project }: ContactSectionProps) {
             className='lg:col-span-2 space-y-8 rounded-r-2xl p-8 relative overflow-hidden flex flex-col max-lg:rounded-b-2xl max-lg:rounded-t-none '
             style={{
               backgroundImage: ` linear-gradient(
-    hsl(var(--primary) / 0.85),
+    hsl(var(--primary) / 1),
     hsl(var(--primary) / 1)
   ), url(${
     project.gallery[1]?.url || project.gallery[0]?.url || project.heroImage
@@ -128,7 +128,7 @@ export function ContactSection({ project }: ContactSectionProps) {
               </div>
 
               {/* Contact Information */}
-              <div className='mt-6  grid grid-cols-1 max-sm:grid-cols-2 gap-4'>
+              <div className='mt-6  grid grid-cols-1   gap-4'>
                 <a
                   href='tel:+201121898883'
                   className='flex items-center gap-3 text-white/90 hover:text-white transition-colors'

@@ -51,7 +51,7 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
       </div>
 
       {/* Desktop: Accordion */}
-      <div className='hidden md:flex h-[400px] gap-2 overflow-hidden rounded-xl'>
+      <div className='hidden md:flex h-[400px] gap-2 overflow-hidden rounded-lg'>
         {images.map((image, index) => (
           <div
             key={index}
@@ -109,7 +109,7 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
 
           <button
             onClick={prevImage}
-            className='absolute left-4 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
+            className='absolute left-4 rounded-lg bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
             aria-label='Previous image'
           >
             <svg
@@ -133,14 +133,11 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
               alt={images[selectedImageIndex].alt}
               className='max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl'
             />
-            <p className='mt-4 text-center text-white text-lg'>
-              {images[selectedImageIndex].alt}
-            </p>
           </div>
 
           <button
             onClick={nextImage}
-            className='absolute right-4 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
+            className='absolute right-4 rounded-lg bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
             aria-label='Next image'
           >
             <svg
@@ -158,7 +155,7 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
             </svg>
           </button>
 
-          <div className='absolute bottom-8 text-white text-sm backdrop-blur-sm bg-black/30 px-4 py-2 rounded-full'>
+          <div className='absolute bottom-8 text-white text-sm backdrop-blur-sm bg-black/30 px-4 py-2 rounded-lg'>
             {selectedImageIndex + 1} / {images.length}
           </div>
         </div>

@@ -1,25 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  MapPin,
-  Building2,
-  ArrowRight,
-  Loader2,
-  ArrowDown,
-} from 'lucide-react';
+import { MapPin, Building2, ArrowRight, ArrowDown } from 'lucide-react';
 import { getProjects, type Project } from '@/lib/api';
 import { Footer } from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useGlobalLoading } from '@/contexts/LoadingContext';
 
 export function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { startLoading, stopLoading } = useGlobalLoading();
 
   useEffect(() => {
     const fetchProjects = async () => {
+      startLoading();
       try {
         const data = await getProjects();
         setProjects(data);
@@ -27,19 +24,16 @@ export function HomePage() {
         setError('Failed to load projects');
         console.error(err);
       } finally {
-        setLoading(false);
+        setPageLoading(false);
+        stopLoading();
       }
     };
 
     fetchProjects();
-  }, []);
+  }, [startLoading, stopLoading]);
 
-  if (loading) {
-    return (
-      <div className='min-h-screen flex items-center justify-center'>
-        <Loader2 className='w-8 h-8 animate-spin text-burgundy' />
-      </div>
-    );
+  if (pageLoading) {
+    return null;
   }
 
   if (error) {

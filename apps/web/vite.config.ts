@@ -24,4 +24,18 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor libraries
+          react: ['react', 'react-dom'],
+          gsap: ['gsap'],
+          lucide: ['lucide-react'],
+        },
+      },
+    },
+    // Optional: increase chunk size warning limit
+    chunkSizeWarningLimit: 1000,
+  },
 });

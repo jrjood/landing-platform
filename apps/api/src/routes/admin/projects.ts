@@ -47,35 +47,53 @@ router.post('/', async (req: AuthRequest, res) => {
 
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO projects (
-        slug, title, subtitle, description, heroImage, gallery, videoUrl, mapEmbedUrl, highlights, location, type, status, phone, whatsapp, email, facebook, instagram, youtube, linkedin, faqs
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        slug, title, subtitle, description, heroImage, heroImageMobile, aboutImage, masterplanImage, caption1, caption2, caption3, gallery, brochureUrl, mapEmbedUrl, location, type, status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         validatedData.slug,
         validatedData.name,
         validatedData.tagline,
         validatedData.description,
         validatedData.heroImage || '',
+        validatedData.heroImageMobile || '',
+        validatedData.aboutImage || '',
+        validatedData.masterplanImage || '',
+        validatedData.caption1 || '',
+        validatedData.caption2 || '',
+        validatedData.caption3 || '',
         JSON.stringify(validatedData.gallery || []),
-        validatedData.videoUrl || '',
+        validatedData.brochureUrl || '',
         validatedData.mapEmbedUrl || '',
-        JSON.stringify(validatedData.highlights || []),
         validatedData.locationText || '',
         validatedData.type || '',
         validatedData.status || '',
-        validatedData.phone || '',
-        validatedData.whatsapp || '',
-        validatedData.email || '',
-        validatedData.facebook || '',
-        validatedData.instagram || '',
-        validatedData.youtube || '',
-        validatedData.linkedin || '',
-        JSON.stringify(validatedData.faqs || []),
       ]
     );
 
+    const projectId = result.insertId;
+
+    if (validatedData.videos && validatedData.videos.length) {
+      const videoValues = validatedData.videos.map((video, idx) => [
+        projectId,
+        video.title,
+        video.category || '',
+        video.thumbnailUrl,
+        video.videoUrl,
+        video.description || '',
+        video.aspectRatio || null,
+        video.sortOrder ?? idx,
+      ]);
+
+      await pool.query(
+        `INSERT INTO project_videos (projectId, title, category, thumbnailUrl, videoUrl, description, aspectRatio, sortOrder)
+         VALUES ?`,
+        [videoValues]
+      );
+    }
+
     res
       .status(201)
-      .json({ message: 'Project created successfully', id: result.insertId });
+      .json({ message: 'Project created successfully', id: projectId });
   } catch (error: any) {
     console.error('Error creating project:', error);
     if (error.name === 'ZodError') {
@@ -99,31 +117,41 @@ interface Project extends RowDataPacket {
   subtitle: string;
   description: string;
   heroImage: string;
+  heroImageMobile: string | null;
+  aboutImage: string | null;
+  masterplanImage: string | null;
+  caption1: string | null;
+  caption2: string | null;
+  caption3: string | null;
   gallery: string;
-  videoUrl: string;
+  brochureUrl: string;
   mapEmbedUrl: string;
-  highlights: string;
   location: string;
   type: string;
   status: string;
-  phone: string;
-  whatsapp: string;
-  email: string;
-  facebook: string;
-  instagram: string;
-  youtube: string;
-  linkedin: string;
-  faqs: string;
   created_at: Date;
   updated_at: Date;
+  videos?: ProjectVideo[];
+}
+
+interface ProjectVideo extends RowDataPacket {
+  id: number;
+  projectId: number;
+  title: string;
+  category: string | null;
+  thumbnailUrl: string;
+  videoUrl: string;
+  description: string | null;
+  aspectRatio: string | null;
+  sortOrder: number | null;
 }
 
 function parseProjectJson(project: Project) {
   return {
     ...project,
-    highlights: JSON.parse(project.highlights || '[]'),
     gallery: JSON.parse(project.gallery || '[]'),
-    faqs: JSON.parse(project.faqs || '[]'),
+    brochureUrl: project.brochureUrl,
+    videos: [] as ProjectVideo[],
   };
 }
 
@@ -135,6 +163,26 @@ router.get('/', async (req: AuthRequest, res) => {
     );
 
     const projects = rows.map(parseProjectJson);
+    const projectIds = projects.map((p) => p.id);
+
+    if (projectIds.length) {
+      const [videoRows] = await pool.query<ProjectVideo[]>(
+        'SELECT * FROM project_videos WHERE projectId IN (?) ORDER BY sortOrder ASC, id ASC',
+        [projectIds]
+      );
+
+      const videosByProject = new Map<number, ProjectVideo[]>();
+      videoRows.forEach((video) => {
+        const list = videosByProject.get(video.projectId) || [];
+        list.push(video);
+        videosByProject.set(video.projectId, list);
+      });
+
+      projects.forEach((project) => {
+        project.videos = videosByProject.get(project.id) || [];
+      });
+    }
+
     res.json(projects);
   } catch (error) {
     console.error('Error fetching projects:', error);
@@ -148,8 +196,25 @@ router.put('/:slug', async (req: AuthRequest, res) => {
     const { slug } = req.params;
     const validatedData = updateProjectSchema.parse(req.body);
 
+    const [projectRows] = await pool.query<Project[]>(
+      'SELECT id FROM projects WHERE slug = ?',
+      [slug]
+    );
+
+    if (projectRows.length === 0) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+
+    const projectId = projectRows[0].id;
+
     const updates: string[] = [];
     const params: any[] = [];
+
+    if (validatedData.slug) {
+      updates.push('slug = ?');
+      params.push(validatedData.slug);
+    }
 
     if (validatedData.name) {
       updates.push('title = ?');
@@ -171,24 +236,49 @@ router.put('/:slug', async (req: AuthRequest, res) => {
       params.push(validatedData.heroImage);
     }
 
+    if (validatedData.heroImageMobile) {
+      updates.push('heroImageMobile = ?');
+      params.push(validatedData.heroImageMobile);
+    }
+
+    if (validatedData.aboutImage) {
+      updates.push('aboutImage = ?');
+      params.push(validatedData.aboutImage);
+    }
+
+    if (validatedData.masterplanImage) {
+      updates.push('masterplanImage = ?');
+      params.push(validatedData.masterplanImage);
+    }
+
+    if (validatedData.caption1 !== undefined) {
+      updates.push('caption1 = ?');
+      params.push(validatedData.caption1 || '');
+    }
+
+    if (validatedData.caption2 !== undefined) {
+      updates.push('caption2 = ?');
+      params.push(validatedData.caption2 || '');
+    }
+
+    if (validatedData.caption3 !== undefined) {
+      updates.push('caption3 = ?');
+      params.push(validatedData.caption3 || '');
+    }
+
     if (validatedData.gallery) {
       updates.push('gallery = ?');
       params.push(JSON.stringify(validatedData.gallery));
     }
 
-    if (validatedData.videoUrl) {
-      updates.push('videoUrl = ?');
-      params.push(validatedData.videoUrl);
+    if (validatedData.brochureUrl !== undefined) {
+      updates.push('brochureUrl = ?');
+      params.push(validatedData.brochureUrl || '');
     }
 
     if (validatedData.mapEmbedUrl !== undefined) {
       updates.push('mapEmbedUrl = ?');
       params.push(validatedData.mapEmbedUrl);
-    }
-
-    if (validatedData.highlights) {
-      updates.push('highlights = ?');
-      params.push(JSON.stringify(validatedData.highlights));
     }
 
     if (validatedData.locationText) {
@@ -206,47 +296,9 @@ router.put('/:slug', async (req: AuthRequest, res) => {
       params.push(validatedData.status);
     }
 
-    if (validatedData.phone) {
-      updates.push('phone = ?');
-      params.push(validatedData.phone);
-    }
+    const hasVideoUpdate = validatedData.videos !== undefined;
 
-    if (validatedData.whatsapp) {
-      updates.push('whatsapp = ?');
-      params.push(validatedData.whatsapp);
-    }
-
-    if (validatedData.email) {
-      updates.push('email = ?');
-      params.push(validatedData.email);
-    }
-
-    if (validatedData.facebook) {
-      updates.push('facebook = ?');
-      params.push(validatedData.facebook);
-    }
-
-    if (validatedData.instagram) {
-      updates.push('instagram = ?');
-      params.push(validatedData.instagram);
-    }
-
-    if (validatedData.youtube) {
-      updates.push('youtube = ?');
-      params.push(validatedData.youtube);
-    }
-
-    if (validatedData.linkedin) {
-      updates.push('linkedin = ?');
-      params.push(validatedData.linkedin);
-    }
-
-    if (validatedData.faqs) {
-      updates.push('faqs = ?');
-      params.push(JSON.stringify(validatedData.faqs));
-    }
-
-    if (updates.length === 0) {
+    if (updates.length === 0 && !hasVideoUpdate) {
       res.status(400).json({ error: 'No fields to update' });
       return;
     }
@@ -261,6 +313,31 @@ router.put('/:slug', async (req: AuthRequest, res) => {
     if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Project not found' });
       return;
+    }
+
+    if (validatedData.videos) {
+      await pool.query('DELETE FROM project_videos WHERE projectId = ?', [
+        projectId,
+      ]);
+
+      if (validatedData.videos.length) {
+        const videoValues = validatedData.videos.map((video, idx) => [
+          projectId,
+          video.title,
+          video.category || '',
+          video.thumbnailUrl,
+          video.videoUrl,
+          video.description || '',
+          video.aspectRatio || null,
+          video.sortOrder ?? idx,
+        ]);
+
+        await pool.query(
+          `INSERT INTO project_videos (projectId, title, category, thumbnailUrl, videoUrl, description, aspectRatio, sortOrder)
+           VALUES ?`,
+          [videoValues]
+        );
+      }
     }
 
     res.json({ message: 'Project updated successfully' });

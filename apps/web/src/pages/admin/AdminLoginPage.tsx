@@ -123,12 +123,12 @@ export function AdminLoginPage() {
               </Button>
             </form>
 
-            <div className='mt-4 text-center text-sm text-muted-foreground'>
+            {/*  <div className='mt-4 text-center text-sm text-muted-foreground'>
               <p>Default credentials:</p>
               <p className='font-mono'>
                 admin@wealthholding-eg.com / YourSecurePassword123!
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

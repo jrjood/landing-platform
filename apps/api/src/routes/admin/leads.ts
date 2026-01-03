@@ -92,6 +92,28 @@ router.patch('/:id/status', async (req: AuthRequest, res) => {
   }
 });
 
+// DELETE /api/admin/leads/:id - Delete lead
+router.delete('/:id', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await pool.query<ResultSetHeader>(
+      'DELETE FROM leads WHERE id = ?',
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Lead not found' });
+      return;
+    }
+
+    res.json({ message: 'Lead deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting lead:', error);
+    res.status(500).json({ error: 'Failed to delete lead' });
+  }
+});
+
 // GET /api/admin/leads/:id - Get single lead
 router.get('/:id', async (req: AuthRequest, res) => {
   try {

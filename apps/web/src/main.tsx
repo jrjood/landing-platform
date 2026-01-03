@@ -1,11 +1,13 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { LoadingProvider } from '@/contexts/LoadingContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { RouteLoadingTracker } from '@/components/RouteLoadingTracker';
+import { StickyTopBar } from '@/components/StickyTopBar';
 import { HomePage } from '@/pages/HomePage';
 import { ProjectPage } from '@/pages/ProjectPage';
 import { AdminLoginPage } from '@/pages/admin/AdminLoginPage';
@@ -14,10 +16,13 @@ import { AdminProjectsPage } from '@/pages/admin/AdminProjectsPage';
 import '@/index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <BrowserRouter>
-        <ScrollToTop />
+  // <React.StrictMode>
+  <HelmetProvider>
+    <BrowserRouter>
+      <ScrollToTop />
+      <LoadingProvider>
+        <StickyTopBar />
+        <RouteLoadingTracker />
         <AuthProvider>
           <Routes>
             {/* Public Routes */}
@@ -38,7 +43,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
           <Toaster position='top-right' richColors />
         </AuthProvider>
-      </BrowserRouter>
-    </HelmetProvider>
-  </React.StrictMode>
+      </LoadingProvider>
+    </BrowserRouter>
+  </HelmetProvider>
+  // </React.StrictMode>
 );

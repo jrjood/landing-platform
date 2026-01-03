@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { createLead } from '@/lib/api';
 
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,14 +12,7 @@ import { Select } from '@/components/ui/select';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MessageCircle, Phone, Loader2 } from 'lucide-react';
 
-const UNIT_TYPES = [
-  'Town House',
-  'Twin House',
-  'Standalone Villa',
-  'Apartment',
-  'Duplex',
-  'Studio',
-];
+const UNIT_TYPES = ['Standalone Villa', 'Twin Villa'];
 
 const leadFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(255),
@@ -220,7 +212,7 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
             Submitting...
           </>
         ) : (
-          'Submit Inquiry'
+          'Request Now'
         )}
       </Button>
 

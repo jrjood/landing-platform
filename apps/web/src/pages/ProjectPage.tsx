@@ -1,32 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getProjectBySlug, type Project } from '@/lib/api';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/pages/project/HeroSection';
 import { ProjectDetailsSection } from '@/pages/project/ProjectDetailsSection';
-
+import { MasterPaymentSection } from '@/pages/project/MasterPaymentSection';
+import { AboutDeveloperSection } from '@/pages/project/AboutDeveloperSection';
 import { Location } from '@/pages/project/Location';
 import { GallerySection } from '@/pages/project/GallerySection';
 import { ContactSection } from '@/pages/project/ContactSection';
+import { useGlobalLoading } from '@/contexts/LoadingContext';
 import { toast } from 'sonner';
 
 export function ProjectPage() {
   const { projectSlug } = useParams<{ projectSlug: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const { startLoading, stopLoading } = useGlobalLoading();
 
-  useEffect(() => {
-    if (!projectSlug) return;
-
-    loadProject();
-  }, [projectSlug]);
-
-  const loadProject = async () => {
+  const loadProject = useCallback(async () => {
     if (!projectSlug) return;
 
     setLoading(true);
+    startLoading();
     try {
       const project = await getProjectBySlug(projectSlug);
       setProject(project);
@@ -35,23 +32,18 @@ export function ProjectPage() {
       toast.error('Failed to load project');
     } finally {
       setLoading(false);
+      stopLoading();
     }
-  };
+  }, [projectSlug, startLoading, stopLoading]);
+
+  useEffect(() => {
+    if (!projectSlug) return;
+
+    loadProject();
+  }, [projectSlug, loadProject]);
 
   if (loading) {
-    return (
-      <div className='min-h-screen bg-background'>
-        <div className='container mx-auto px-4 py-8'>
-          <Skeleton className='mb-4 h-12 w-3/4' />
-          <Skeleton className='mb-8 h-6 w-1/2' />
-          <Skeleton className='mb-8 h-96 w-full' />
-          <div className='grid gap-8 md:grid-cols-2'>
-            <Skeleton className='h-64' />
-            <Skeleton className='h-64' />
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (!project) {
@@ -77,9 +69,16 @@ export function ProjectPage() {
       <div className='min-h-screen bg-background page-transition'>
         <HeroSection project={project} />
         <ProjectDetailsSection project={project} />
-        <GallerySection images={project.gallery} />
+        <GallerySection
+          images={project.gallery}
+          brochureUrl={project.brochureUrl}
+          project={project}
+          videos={project.videos}
+        />
         <Location project={project} />
+        <MasterPaymentSection project={project} />
         <ContactSection project={project} />
+        <AboutDeveloperSection project={project} />
         <Footer />
       </div>
     </>

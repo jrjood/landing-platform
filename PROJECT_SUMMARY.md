@@ -36,7 +36,7 @@ This is a **complete, production-ready monorepo** for a subdomain-based real est
   - Export to CSV
 - Projects management:
   - Edit all project content
-  - Update gallery, FAQs, highlights
+  - Update gallery, FAQs, videos
   - Real-time preview updates
 
 ### 🔧 Technical Stack
@@ -225,7 +225,7 @@ cd apps/api && npm run seed
 
 - 3 pre-seeded projects (proj-a, proj-b, proj-c)
 - All content fields (name, tagline, description, etc.)
-- JSON arrays for highlights, gallery, FAQs
+- JSON arrays for gallery, FAQs
 - Unique slug for routing
 
 ### leads

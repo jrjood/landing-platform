@@ -45,10 +45,29 @@ export function AdminProjectsPage() {
   const [subtitle, setSubtitle] = useState('');
   const [description, setDescription] = useState('');
   const [heroImage, setHeroImage] = useState('');
-  const [galleryText, setGalleryText] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
+  const [heroImageMobile, setHeroImageMobile] = useState('');
+  const [aboutImage, setAboutImage] = useState('');
+  const [masterplanImage, setMasterplanImage] = useState('');
+  const [caption1, setCaption1] = useState('');
+  const [caption2, setCaption2] = useState('');
+  const [caption3, setCaption3] = useState('');
+  const [galleryItems, setGalleryItems] = useState<
+    { url: string; alt: string }[]
+  >([]);
+  const [videos, setVideos] = useState<
+    {
+      id?: number;
+      title: string;
+      category?: string;
+      thumbnailUrl: string;
+      videoUrl: string;
+      description?: string;
+      aspectRatio?: string;
+      sortOrder?: number;
+    }[]
+  >([]);
+  const [brochureUrl, setBrochureUrl] = useState('');
   const [mapEmbedUrl, setMapEmbedUrl] = useState('');
-  const [highlightsText, setHighlightsText] = useState('');
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
   const [status, setStatus] = useState('');
@@ -89,12 +108,16 @@ export function AdminProjectsPage() {
     setSubtitle(project.subtitle);
     setDescription(project.description);
     setHeroImage(project.heroImage);
-    setGalleryText(JSON.stringify(project.gallery));
-    setVideoUrl(project.videoUrl || '');
+    setHeroImageMobile(project.heroImageMobile || '');
+    setAboutImage(project.aboutImage || '');
+    setMasterplanImage(project.masterplanImage || '');
+    setCaption1(project.caption1 || '');
+    setCaption2(project.caption2 || '');
+    setCaption3(project.caption3 || '');
+    setGalleryItems(project.gallery || []);
+    setVideos(project.videos || []);
+    setBrochureUrl(project.brochureUrl || '');
     setMapEmbedUrl(project.mapEmbedUrl || '');
-    setHighlightsText(
-      project.highlights ? JSON.stringify(project.highlights) : ''
-    );
     setLocation(project.location);
     setType(project.type);
     setStatus(project.status);
@@ -107,10 +130,16 @@ export function AdminProjectsPage() {
     setSubtitle('');
     setDescription('');
     setHeroImage('');
+    setHeroImageMobile('');
+    setAboutImage('');
+    setMasterplanImage('');
+    setCaption1('');
+    setCaption2('');
+    setCaption3('');
     setMapEmbedUrl('');
-    setHighlightsText('');
-    setGalleryText('');
-    setVideoUrl('');
+    setGalleryItems([]);
+    setVideos([]);
+    setBrochureUrl('');
     setLocation('');
     setType('');
     setStatus('');
@@ -120,39 +149,29 @@ export function AdminProjectsPage() {
     try {
       setSaving(true);
 
-      // Parse gallery JSON
-      let gallery: { url: string; alt: string }[] = [];
-      if (galleryText.trim()) {
-        try {
-          gallery = JSON.parse(galleryText);
-        } catch (e) {
-          toast.error('Invalid JSON format in gallery');
-          return;
-        }
-      }
-
       const projectData = {
+        // send both legacy and new keys to satisfy API validation
         name: title,
+        title,
         slug,
         tagline: subtitle,
+        subtitle,
         description,
         heroImage,
         mapEmbedUrl,
-        highlights: highlightsText ? JSON.parse(highlightsText) : [],
-        gallery,
-        videoUrl: videoUrl || undefined,
+        gallery: galleryItems.filter((g) => g.url?.trim()),
+        videos: videos?.filter((v) => v.videoUrl?.trim()),
+        location,
         locationText: location,
+        brochureUrl: brochureUrl || undefined,
         type,
         status,
-        phone: '+20 112 189 8883',
-        whatsapp: '+20 110 008 2530',
-        email: 'info@wealthholding-eg.com',
-        facebook: 'https://www.facebook.com/WealthHoldingDevelopments',
-        instagram: 'https://www.instagram.com/wealthholdingdevelopments',
-        youtube: 'https://www.youtube.com/@WealthHoldingDevelopments',
-        linkedin:
-          'https://www.linkedin.com/company/wealth-holding-developments',
-        faqs: [],
+        heroImageMobile: heroImageMobile || undefined,
+        aboutImage: aboutImage || undefined,
+        masterplanImage: masterplanImage || undefined,
+        caption1: caption1 || undefined,
+        caption2: caption2 || undefined,
+        caption3: caption3 || undefined,
       };
 
       // console.log('Project data being sent:', projectData);
@@ -212,7 +231,9 @@ export function AdminProjectsPage() {
       {/* Header */}
       <div className='  border-b'>
         <div className='container mx-auto px-4 py-4 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold text-white'>Admin Dashboard</h1>
+          <h1 className='text-2xl font-bold text-card-foreground'>
+            Admin Dashboard
+          </h1>
           <div className='flex items-center gap-4'>
             <Button variant='outline' onClick={() => navigate('/admin/leads')}>
               Leads
@@ -249,7 +270,7 @@ export function AdminProjectsPage() {
                 {projects.map((project) => (
                   <div
                     key={project.id}
-                    className='flex items-center gap-4 p-4 border rounded-lg hover:bg-stone-800'
+                    className='flex items-center gap-4 p-4 border rounded-lg hover:bg-stone-800/10'
                   >
                     <img
                       src={project.heroImage}
@@ -368,6 +389,36 @@ export function AdminProjectsPage() {
             </div>
 
             <div className='grid gap-2'>
+              <Label htmlFor='heroImageMobile'>Hero Image (Mobile)</Label>
+              <Input
+                id='heroImageMobile'
+                value={heroImageMobile}
+                onChange={(e) => setHeroImageMobile(e.target.value)}
+                placeholder='Optional mobile-specific hero image'
+              />
+            </div>
+
+            <div className='grid gap-2'>
+              <Label htmlFor='aboutImage'>About Image</Label>
+              <Input
+                id='aboutImage'
+                value={aboutImage}
+                onChange={(e) => setAboutImage(e.target.value)}
+                placeholder='Used in the About section'
+              />
+            </div>
+
+            <div className='grid gap-2'>
+              <Label htmlFor='masterplanImage'>Masterplan Image</Label>
+              <Input
+                id='masterplanImage'
+                value={masterplanImage}
+                onChange={(e) => setMasterplanImage(e.target.value)}
+                placeholder='Optional masterplan visual'
+              />
+            </div>
+
+            <div className='grid gap-2'>
               <Label htmlFor='mapEmbedUrl'>Google Maps Embed URL</Label>
               <Input
                 id='mapEmbedUrl'
@@ -376,35 +427,238 @@ export function AdminProjectsPage() {
                 onChange={(e) => setMapEmbedUrl(e.target.value)}
               />
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='highlights'>Highlights (JSON Array)</Label>
-              <textarea
-                id='highlights'
-                className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
-                placeholder='["Highlight 1", "Highlight 2", "Highlight 3"]'
-                value={highlightsText}
-                onChange={(e) => setHighlightsText(e.target.value)}
-              />
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <Label>Gallery Images</Label>
+                <Button
+                  type='button'
+                  size='sm'
+                  variant='ghost'
+                  onClick={() =>
+                    setGalleryItems([...galleryItems, { url: '', alt: '' }])
+                  }
+                >
+                  Add Image
+                </Button>
+              </div>
+              {galleryItems.length === 0 && (
+                <p className='text-xs text-muted-foreground'>
+                  No images added yet.
+                </p>
+              )}
+              <div className='space-y-3'>
+                {galleryItems.map((item, idx) => (
+                  <div key={idx} className='grid gap-2 rounded border p-3'>
+                    <div className='flex gap-2 items-center'>
+                      <Input
+                        value={item.url}
+                        onChange={(e) => {
+                          const next = [...galleryItems];
+                          next[idx] = { ...next[idx], url: e.target.value };
+                          setGalleryItems(next);
+                        }}
+                        placeholder='Image URL'
+                      />
+                      <Input
+                        value={item.alt}
+                        onChange={(e) => {
+                          const next = [...galleryItems];
+                          next[idx] = { ...next[idx], alt: e.target.value };
+                          setGalleryItems(next);
+                        }}
+                        placeholder='Alt text'
+                      />
+                      <Button
+                        type='button'
+                        variant='outline'
+                        onClick={() =>
+                          setGalleryItems(
+                            galleryItems.filter((_, i) => i !== idx)
+                          )
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className='space-y-3'>
+              <div className='flex items-center justify-between'>
+                <Label>Videos</Label>
+                <Button
+                  type='button'
+                  size='sm'
+                  variant='outline'
+                  onClick={() =>
+                    setVideos([
+                      ...videos,
+                      {
+                        title: '',
+                        category: '',
+                        thumbnailUrl: '',
+                        videoUrl: '',
+                        description: '',
+                        sortOrder: videos.length,
+                      },
+                    ])
+                  }
+                >
+                  Add Video
+                </Button>
+              </div>
+              {videos.length === 0 && (
+                <p className='text-xs text-muted-foreground'>
+                  No videos added yet.
+                </p>
+              )}
+              <div className='space-y-3'>
+                {videos.map((video, idx) => (
+                  <div key={idx} className='space-y-2 rounded border p-3'>
+                    <div className='grid gap-2 md:grid-cols-2'>
+                      <Input
+                        value={video.title}
+                        onChange={(e) => {
+                          const next = [...videos];
+                          next[idx] = { ...next[idx], title: e.target.value };
+                          setVideos(next);
+                        }}
+                        placeholder='Title'
+                      />
+                      <Input
+                        value={video.category || ''}
+                        onChange={(e) => {
+                          const next = [...videos];
+                          next[idx] = {
+                            ...next[idx],
+                            category: e.target.value,
+                          };
+                          setVideos(next);
+                        }}
+                        placeholder='Category'
+                      />
+                    </div>
+                    <div className='grid gap-2 md:grid-cols-2'>
+                      <Input
+                        value={video.thumbnailUrl}
+                        onChange={(e) => {
+                          const next = [...videos];
+                          next[idx] = {
+                            ...next[idx],
+                            thumbnailUrl: e.target.value,
+                          };
+                          setVideos(next);
+                        }}
+                        placeholder='Thumbnail URL'
+                      />
+                      <Input
+                        value={video.videoUrl}
+                        onChange={(e) => {
+                          const next = [...videos];
+                          next[idx] = {
+                            ...next[idx],
+                            videoUrl: e.target.value,
+                          };
+                          setVideos(next);
+                        }}
+                        placeholder='Video URL'
+                      />
+                    </div>
+                    <Input
+                      value={video.aspectRatio || ''}
+                      onChange={(e) => {
+                        const next = [...videos];
+                        next[idx] = {
+                          ...next[idx],
+                          aspectRatio: e.target.value,
+                        };
+                        setVideos(next);
+                      }}
+                      placeholder='Aspect ratio (e.g., 16 / 9)'
+                    />
+                    <Textarea
+                      value={video.description || ''}
+                      onChange={(e) => {
+                        const next = [...videos];
+                        next[idx] = {
+                          ...next[idx],
+                          description: e.target.value,
+                        };
+                        setVideos(next);
+                      }}
+                      rows={2}
+                      placeholder='Description (optional)'
+                    />
+                    <div className='flex items-center gap-3'>
+                      <Input
+                        type='number'
+                        value={video.sortOrder ?? idx}
+                        onChange={(e) => {
+                          const next = [...videos];
+                          next[idx] = {
+                            ...next[idx],
+                            sortOrder: Number(e.target.value),
+                          };
+                          setVideos(next);
+                        }}
+                        className='w-28'
+                        placeholder='Order'
+                      />
+                      <Button
+                        type='button'
+                        variant='outline'
+                        onClick={() =>
+                          setVideos(videos.filter((_, i) => i !== idx))
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className='grid gap-2'>
-              <Label htmlFor='gallery'>Gallery (JSON array of URLs)</Label>
-              <Textarea
-                id='gallery'
-                value={galleryText}
-                onChange={(e) => setGalleryText(e.target.value)}
-                rows={3}
-                placeholder='["url1", "url2", "url3"]'
-              />
-            </div>
-
-            <div className='grid gap-2'>
-              <Label htmlFor='videoUrl'>Video URL (optional)</Label>
+              <Label htmlFor='brochureUrl'>
+                Brochure Link (Google Drive, etc.)
+              </Label>
               <Input
-                id='videoUrl'
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
+                id='brochureUrl'
+                value={brochureUrl}
+                onChange={(e) => setBrochureUrl(e.target.value)}
+                placeholder='https://drive.google.com/your-brochure-link'
               />
+            </div>
+
+            <div className='grid grid-cols-3 gap-4'>
+              <div className='grid gap-2'>
+                <Label htmlFor='caption1'>Caption 1 (optional)</Label>
+                <Input
+                  id='caption1'
+                  value={caption1}
+                  onChange={(e) => setCaption1(e.target.value)}
+                  placeholder='Short supporting caption'
+                />
+              </div>
+              <div className='grid gap-2'>
+                <Label htmlFor='caption2'>Caption 2 (optional)</Label>
+                <Input
+                  id='caption2'
+                  value={caption2}
+                  onChange={(e) => setCaption2(e.target.value)}
+                />
+              </div>
+              <div className='grid gap-2'>
+                <Label htmlFor='caption3'>Caption 3 (optional)</Label>
+                <Input
+                  id='caption3'
+                  value={caption3}
+                  onChange={(e) => setCaption3(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className='grid grid-cols-3 gap-4'>

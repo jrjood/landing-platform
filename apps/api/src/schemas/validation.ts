@@ -41,45 +41,53 @@ export const updateLeadSchema = z.object({
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
 
 // Project update schema (admin)
+const urlOrLocalPath = z
+  .string()
+  .refine(
+    (v) => /^https?:\/\//.test(v) || v.startsWith('/'),
+    'Must be a valid URL or a path starting with /'
+  );
+
+const videoSchema = z.object({
+  title: z.string().min(1, 'Video title is required'),
+  category: z.string().optional(),
+  thumbnailUrl: urlOrLocalPath,
+  videoUrl: urlOrLocalPath,
+  description: z.string().optional(),
+  aspectRatio: z.string().optional(),
+  sortOrder: z.number().optional(),
+});
+
 export const updateProjectSchema = z.object({
   slug: z.string().min(1).max(255).optional(),
   name: z.string().min(1).max(255).optional(),
   tagline: z.string().min(1).max(500).optional(),
   description: z.string().min(1).optional(),
-  heroImage: z.string().optional(),
+  heroImage: urlOrLocalPath.optional(),
+  heroImageMobile: urlOrLocalPath.optional(),
+  aboutImage: urlOrLocalPath.optional(),
+  masterplanImage: urlOrLocalPath.optional(),
+  caption1: z.string().optional(),
+  caption2: z.string().optional(),
+  caption3: z.string().optional(),
   gallery: z
     .array(
       z.object({
-        url: z.string().url(),
+        url: urlOrLocalPath,
         alt: z.string(),
       })
     )
     .optional(),
-  videoUrl: z.string().optional(),
+  videos: z.array(videoSchema).optional(),
+  brochureUrl: z.string().optional(),
   mapEmbedUrl: z.string().optional(),
-  highlights: z.array(z.string()).optional(),
   locationText: z.string().min(1).max(255).optional(),
   location: z.string().optional(),
   type: z.string().optional(),
   status: z.string().optional(),
-  phone: z.string().optional(),
-  whatsapp: z.string().optional(),
-  email: z.string().optional(),
-  facebook: z.string().optional(),
-  instagram: z.string().optional(),
-  youtube: z.string().optional(),
-  linkedin: z.string().optional(),
   deliveryDate: z.string().min(1).max(100).optional(),
   paymentPlan: z.string().min(1).optional(),
   startingPrice: z.string().min(1).max(100).optional(),
-  faqs: z
-    .array(
-      z.object({
-        q: z.string(),
-        a: z.string(),
-      })
-    )
-    .optional(),
 });
 
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;

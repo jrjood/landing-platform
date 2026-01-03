@@ -5,6 +5,18 @@ export interface GalleryImage {
   alt: string;
 }
 
+export interface ProjectVideo {
+  id?: number;
+  projectId?: number;
+  title: string;
+  category?: string;
+  thumbnailUrl: string;
+  videoUrl: string;
+  description?: string;
+  aspectRatio?: string;
+  sortOrder?: number;
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -12,21 +24,19 @@ export interface Project {
   subtitle: string;
   description: string;
   heroImage: string;
+  heroImageMobile?: string;
+  aboutImage?: string;
+  masterplanImage?: string;
+  caption1?: string;
+  caption2?: string;
+  caption3?: string;
   gallery: GalleryImage[];
-  videoUrl?: string;
+  videos?: ProjectVideo[];
+  brochureUrl?: string;
   mapEmbedUrl?: string;
-  highlights?: string[];
   location: string;
   type: string;
   status: string;
-  phone: string;
-  whatsapp: string;
-  email: string;
-  facebook?: string;
-  instagram?: string;
-  youtube?: string;
-  linkedin?: string;
-  faqs?: Array<{ question: string; answer: string }>;
   createdAt: string;
   updatedAt: string;
 }

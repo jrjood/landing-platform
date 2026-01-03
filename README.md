@@ -40,7 +40,7 @@ landing-platform/
 - **Projects Management**:
   - Edit project content (text, images, FAQs)
   - Update project details
-  - Manage gallery and highlights
+- Manage gallery and videos
 
 ### Technical Features
 
@@ -391,7 +391,6 @@ VITE_API_URL=https://your-api-service.herokuapp.com/api
 - `delivery_date` - Expected delivery
 - `payment_plan` - Payment plan details
 - `starting_price` - Starting price
-- `highlights` - JSON array of features
 - `gallery` - JSON array of images
 - `faqs` - JSON array of FAQs
 - `created_at`, `updated_at` - Timestamps
