@@ -1,11 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-} from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { Card, CardContent } from '../ui/card';
 import { Calendar } from 'lucide-react';
@@ -209,8 +204,8 @@ export const ScrollTimeline = ({
           ? 'lg:mr-[calc(50%+20px)]'
           : 'lg:ml-[calc(50%+20px)]'
         : cardAlignment === 'left'
-          ? 'lg:mr-auto lg:ml-0'
-          : 'lg:ml-auto lg:mr-0';
+        ? 'lg:mr-auto lg:ml-0'
+        : 'lg:ml-auto lg:mr-0';
 
     return cn(
       baseClasses,
