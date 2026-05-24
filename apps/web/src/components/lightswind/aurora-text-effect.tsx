@@ -35,10 +35,10 @@ export function AuroraTextEffect({
   textClassName,
   fontSize = 'clamp(3rem, 8vw, 7rem)',
   colors = {
-    first: 'bg-cyan-400',
-    second: 'bg-yellow-400',
-    third: 'bg-green-400',
-    fourth: 'bg-purple-500',
+    first: 'bg-primary',
+    second: 'bg-secondary',
+    third: 'bg-muted',
+    fourth: 'bg-primary',
   },
   blurAmount = 'blur-lg',
   animationSpeed = {
@@ -84,27 +84,23 @@ export function AuroraTextEffect({
     }
   `;
 
-  // Make aurora effect compact and always visible
-  // Use 5em so it tightly hugs the text regardless of font size
-  const auroraSize = '5em';
-
   return (
     <div
       className={cn(
-        'bg-white dark:bg-black flex items-center justify-center overflow-hidden',
+        // Updated to support light and dark modes
+        'bg-muted dark:bg-black flex items-center justify-center  ',
         className
       )}
     >
-      <style>{keyframes}</style>
+      <style>{keyframes /* This injects the keyframes into the DOM */}</style>
       <div className='text-center'>
         <h2
           className={cn(
+            // Added theme-aware text color for visibility
             'font-extrabold tracking-tight relative overflow-hidden text-black dark:text-white',
             textClassName
           )}
-          style={{
-            fontSize,
-          }}
+          style={{ fontSize }}
         >
           {text}
           <div
@@ -114,13 +110,11 @@ export function AuroraTextEffect({
             {/* First Aurora Layer */}
             <div
               className={cn(
-                'absolute rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
-                colors.first || 'bg-cyan-400',
+                'absolute w-[20vw] h-[20vw] rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
+                colors.first || 'bg-primary',
                 blurAmount
               )}
               style={{
-                width: auroraSize,
-                height: auroraSize,
                 animationName: 'aurora-border, aurora-1',
                 animationDuration: `${animationSpeed.border}s, ${animationSpeed.first}s`,
                 animationTimingFunction: 'ease-in-out, ease-in-out',
@@ -132,13 +126,11 @@ export function AuroraTextEffect({
             {/* Second Aurora Layer */}
             <div
               className={cn(
-                'absolute rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
+                'absolute w-[20vw] h-[20vw] rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
                 colors.second,
                 blurAmount
               )}
               style={{
-                width: auroraSize,
-                height: auroraSize,
                 animationName: 'aurora-border, aurora-2',
                 animationDuration: `${animationSpeed.border}s, ${animationSpeed.second}s`,
                 animationTimingFunction: 'ease-in-out, ease-in-out',
@@ -150,13 +142,11 @@ export function AuroraTextEffect({
             {/* Third Aurora Layer */}
             <div
               className={cn(
-                'absolute rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
+                'absolute w-[20vw] h-[20vw] rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
                 colors.third,
                 blurAmount
               )}
               style={{
-                width: auroraSize,
-                height: auroraSize,
                 animationName: 'aurora-border, aurora-3',
                 animationDuration: `${animationSpeed.border}s, ${animationSpeed.third}s`,
                 animationTimingFunction: 'ease-in-out, ease-in-out',
@@ -168,13 +158,11 @@ export function AuroraTextEffect({
             {/* Fourth Aurora Layer */}
             <div
               className={cn(
-                'absolute rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
+                'absolute w-[20vw] h-[20vw] rounded-[37%_29%_27%_27%/28%_25%_41%_37%] filter mix-blend-overlay',
                 colors.fourth,
                 blurAmount
               )}
               style={{
-                width: auroraSize,
-                height: auroraSize,
                 animationName: 'aurora-border, aurora-4',
                 animationDuration: `${animationSpeed.border}s, ${animationSpeed.fourth}s`,
                 animationTimingFunction: 'ease-in-out, ease-in-out',

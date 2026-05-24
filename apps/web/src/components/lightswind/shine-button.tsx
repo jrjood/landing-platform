@@ -3,6 +3,8 @@ import React, { ReactNode } from 'react';
 interface ShineButtonProps {
   label?: ReactNode;
   onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   bgColor?: string; // Can be hex or gradient
@@ -19,6 +21,8 @@ const sizeStyles: Record<
 export const ShineButton: React.FC<ShineButtonProps> = ({
   label = 'Shine now',
   onClick,
+  type = 'button',
+  disabled = false,
   className = '',
   size = 'md',
   bgColor = 'linear-gradient(325deg, hsl(217 100% 56%) 0%, hsl(194 100% 69%) 55%, hsl(217 100% 56%) 90%)',
@@ -32,6 +36,8 @@ export const ShineButton: React.FC<ShineButtonProps> = ({
 
   return (
     <button
+      type={type}
+      disabled={disabled}
       onClick={onClick}
       className={`relative text-white font-medium rounded-md min-w-[120px] min-h-[44px] transition-all duration-700 ease-in-out
         border-none cursor-pointer

@@ -1,165 +1,242 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, X, Image } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AccordionGalleryProps {
   images: { url: string; alt: string }[];
 }
 
 export function AccordionGallery({ images }: AccordionGalleryProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ isDown: boolean; startX: number; scrollLeft: number; dragged: boolean }>({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    dragged: false,
+  });
 
-  const openLightbox = (index: number) => {
-    setSelectedImageIndex(index);
+  const openLightbox = useCallback((index: number) => {
+    setLightboxIdx(index);
     setLightboxOpen(true);
-  };
+  }, []);
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
-  };
+  }, []);
 
-  const nextImage = () => {
-    setSelectedImageIndex((prev) => (prev + 1) % images.length);
-  };
+  const navigate = useCallback((dir: 'next' | 'prev') => {
+    setLightboxIdx((prev) => {
+      if (dir === 'next') return (prev + 1) % images.length;
+      return (prev - 1 + images.length) % images.length;
+    });
+  }, [images.length]);
 
-  const prevImage = () => {
-    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+  const scroll = useCallback((dir: 'next' | 'prev') => {
+    if (!scrollRef.current) return;
+    const scrollAmount = scrollRef.current.clientWidth * 0.34;
+    scrollRef.current.scrollBy({
+      left: dir === 'next' ? scrollAmount : -scrollAmount,
+      behavior: 'smooth',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigate('prev');
+      if (e.key === 'ArrowRight') navigate('next');
+    };
+    document.addEventListener('keydown', handler);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handler);
+    };
+  }, [lightboxOpen, closeLightbox, navigate]);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    dragState.current.isDown = true;
+    dragState.current.startX = e.pageX - el.offsetLeft;
+    dragState.current.scrollLeft = el.scrollLeft;
+    dragState.current.dragged = false;
+    el.style.cursor = 'grabbing';
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const el = scrollRef.current;
+    if (!dragState.current.isDown || !el) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - dragState.current.startX) * 1.5;
+    if (Math.abs(walk) > 5) dragState.current.dragged = true;
+    el.scrollLeft = dragState.current.scrollLeft - walk;
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    dragState.current.isDown = false;
+    el.style.cursor = 'grab';
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    dragState.current.isDown = false;
+    el.style.cursor = 'grab';
+  }, []);
+
+  if (!images.length) {
+    return (
+      <div className='media-reference__empty'>
+        <Image className='h-5 w-5' />
+        <span>Photos coming soon</span>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Mobile: 2x2 Grid */}
-      <div className='grid grid-cols-2 gap-2 rounded-xl md:hidden'>
-        {images.map((image, index) => (
+      <div className='video-reference__preview overflow-hidden'>
+        <div className='relative h-full w-full'>
+          <div className='pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-black/10 to-transparent' />
+          <div className='pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-black/10 to-transparent' />
+
           <div
-            key={index}
-            onClick={() => openLightbox(index)}
-            className='relative cursor-pointer overflow-hidden rounded-lg aspect-square'
+            ref={scrollRef}
+            className='scrollbar-hide flex h-full cursor-grab select-none gap-1.5 overflow-x-auto px-1.5 scroll-smooth'
+            style={{ scrollSnapType: 'x mandatory' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
           >
-            <img
-              src={image.url}
-              alt={image.alt}
-              className='h-full w-full object-cover'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent'>
-              <div className='absolute bottom-3 left-3 text-white'>
-                <p className='text-sm font-semibold'>{image.alt}</p>
-              </div>
-            </div>
+            {images.map((img, index) => (
+              <button
+                key={`${img.url}-${index}`}
+                type='button'
+                onClick={() => { if (!dragState.current.dragged) openLightbox(index); }}
+                className='relative h-full flex-shrink-0 overflow-hidden focus:outline-none'
+                style={{
+                  width: '31%',
+                  scrollSnapAlign: 'start',
+                }}
+              >
+                <img
+                  src={img.url}
+                  alt={img.alt || `Gallery image ${index + 1}`}
+                  loading='lazy'
+                  className='h-full w-full rounded-[0.22rem] object-cover transition-transform duration-500 hover:scale-105'
+                />
+              </button>
+            ))}
           </div>
-        ))}
+
+          {images.length > 3 && (
+            <>
+              <button
+                type='button'
+                onClick={(e) => { e.stopPropagation(); scroll('prev'); }}
+                className='absolute left-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-black/60 hover:text-white'
+                aria-label='Previous photos'
+              >
+                <ChevronLeft className='h-4 w-4' />
+              </button>
+              <button
+                type='button'
+                onClick={(e) => { e.stopPropagation(); scroll('next'); }}
+                className='absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white/80 backdrop-blur-sm transition hover:bg-black/60 hover:text-white'
+                aria-label='Next photos'
+              >
+                <ChevronRight className='h-4 w-4' />
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Desktop: Accordion */}
-      <div className='hidden md:flex h-[400px] gap-2 overflow-hidden rounded-lg'>
-        {images.map((image, index) => (
-          <div
-            key={index}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            onClick={() => openLightbox(index)}
-            className={`relative cursor-pointer overflow-hidden rounded-lg transition-all duration-500 ease-out ${
-              hoveredIndex === null
-                ? 'flex-1'
-                : hoveredIndex === index
-                ? 'flex-[1]'
-                : 'flex-[0.5]'
-            }`}
-          >
-            <img
-              src={image.url}
-              alt={image.alt}
-              className='h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-110'
-            />
-            <div
-              className={`absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-500 ${
-                hoveredIndex === index ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <div className='absolute bottom-6 left-6 text-white'>
-                <p className='text-lg font-semibold'>{image.alt}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className='media-reference__actions'>
+        <button
+          type='button'
+          className='media-reference__outline-button'
+          onClick={() => openLightbox(0)}
+        >
+          View All Photos
+        </button>
       </div>
 
       {/* Lightbox */}
-      {lightboxOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/95 animate-in fade-in duration-200'>
-          <button
+      <AnimatePresence>
+        {lightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className='fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-3 md:p-6'
             onClick={closeLightbox}
-            className='absolute right-4 top-4 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20'
-            aria-label='Close'
           >
-            <svg
-              className='h-6 w-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
+            <button
+              onClick={closeLightbox}
+              className='absolute right-5 top-5 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 backdrop-blur-sm transition hover:bg-white/10 hover:text-white'
+              type='button'
             >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M6 18L18 6M6 6l12 12'
-              />
-            </svg>
-          </button>
+              <X className='h-4 w-4' />
+            </button>
 
-          <button
-            onClick={prevImage}
-            className='absolute left-4 rounded-lg bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
-            aria-label='Previous image'
-          >
-            <svg
-              className='h-8 w-8'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigate('prev'); }}
+                  className='absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 backdrop-blur-sm transition hover:bg-white/10 hover:text-white'
+                  type='button'
+                >
+                  <ChevronLeft className='h-4 w-4' />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigate('next'); }}
+                  className='absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/60 backdrop-blur-sm transition hover:bg-white/10 hover:text-white'
+                  type='button'
+                >
+                  <ChevronRight className='h-4 w-4' />
+                </button>
+              </>
+            )}
+
+            <motion.div
+              key={lightboxIdx}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+              className='relative max-h-[90vh] w-full max-w-5xl'
+              onClick={(e) => e.stopPropagation()}
             >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M15 19l-7-7 7-7'
+              <img
+                src={images[lightboxIdx].url}
+                alt={images[lightboxIdx].alt}
+                className='max-h-[90vh] w-full rounded-lg object-contain'
               />
-            </svg>
-          </button>
 
-          <div className='max-h-[90vh] max-w-[90vw] animate-in zoom-in-95 duration-300'>
-            <img
-              src={images[selectedImageIndex].url}
-              alt={images[selectedImageIndex].alt}
-              className='max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl'
-            />
-          </div>
-
-          <button
-            onClick={nextImage}
-            className='absolute right-4 rounded-lg bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-110'
-            aria-label='Next image'
-          >
-            <svg
-              className='h-8 w-8'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M9 5l7 7-7 7'
-              />
-            </svg>
-          </button>
-
-          <div className='absolute bottom-8 text-white text-sm backdrop-blur-sm bg-black/30 px-4 py-2 rounded-lg'>
-            {selectedImageIndex + 1} / {images.length}
-          </div>
-        </div>
-      )}
+              <div className='absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/50 px-3.5 py-1.5 text-[11px] text-white/50 backdrop-blur-md'>
+                {lightboxIdx + 1} / {images.length}
+                {images[lightboxIdx].alt && (
+                  <>
+                    <span className='mx-2 inline-block h-1 w-1 rounded-full bg-white/20' />
+                    {images[lightboxIdx].alt}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

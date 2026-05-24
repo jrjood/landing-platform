@@ -52,14 +52,14 @@
 
 .demo-text {
   text-transform: capitalize;
-  color: #fff;
-  letter-spacing: -0.5px;
-  background: #0006;
+  color: var(--brand-cream);
+  letter-spacing: 0;
+  background: rgba(var(--brand-ink-rgb) / 0.72);
   border-radius: 15px;
   margin: 2em;
   padding: 0.5rem 1em;
   font-weight: 900;
-  box-shadow: 0 5px 30px #06001059;
+  box-shadow: 0 5px 30px rgba(var(--brand-ink-rgb) / 0.35);
 }
 
 .tilted-card-caption {
@@ -68,10 +68,10 @@
   left: 0;
   top: 0;
   border-radius: 4px;
-  background-color: #fff;
+  background-color: var(--brand-cream);
   padding: 4px 10px;
   font-size: 10px;
-  color: #2d2d2d;
+  color: var(--brand-ink);
   opacity: 0;
   z-index: 3;
 }

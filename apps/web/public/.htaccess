@@ -1,0 +1,103 @@
+# Apache config for Wealth Holding — SPA + caching + security
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Redirect www to non-www (adjust for your domain)
+  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  # RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+  # Force HTTPS
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  # SPA routing — serve index.html for non-file requests
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Gzip/Brotli compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml image/svg+xml
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# Caching headers
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Images: 1 year
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fonts: 1 year
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+
+  # CSS, JS: 1 year (fingerprinted by Vite)
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+
+  # HTML, JSON: no cache
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # HSTS (uncomment after HTTPS is confirmed)
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  # Permissions Policy
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+  # Cache HTML explicitly as no-cache
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache, must-revalidate, proxy-revalidate"
+  </FilesMatch>
+
+  # Cache fingerprinted assets
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Cache images and fonts
+  <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|woff|woff2|otf|ttf)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+
+  # CORS for API (adjust origin for production)
+  # Header always set Access-Control-Allow-Origin "https://wealthholding-eg.com"
+  # Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  # Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# Block access to dotfiles
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Block sensitive files
+<FilesMatch "\.(env|sql|md|log|lock)$">
+  Require all denied
+</FilesMatch>
+
+# PHP disabled
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>

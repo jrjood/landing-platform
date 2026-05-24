@@ -1,19 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/Icon_Wealth.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wealth Holding Developments</title>
+    <link rel="icon" type="image/svg+xml" href="/Icon_Wealth.svg" />
+    <link rel="apple-touch-icon" href="/Icon_Wealth.svg" />
+
+    <title>Wealth Holding Developments - Premium Real Estate</title>
+    <meta name="description" content="Discover exceptional real estate projects that redefine luxury living and investment opportunities in Egypt's most prestigious locations." />
+    <meta name="keywords" content="real estate, Egypt, luxury properties, Wealth Holding, developments, Cairo, New Cairo, real estate investment" />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#9B6D2C" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wealth Holding Developments" />
+    <meta property="og:title" content="Wealth Holding Developments - Premium Real Estate" />
+    <meta property="og:description" content="Discover exceptional real estate projects that redefine luxury living and investment opportunities in Egypt's most prestigious locations." />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wealth Holding Developments - Premium Real Estate" />
+    <meta name="twitter:description" content="Discover exceptional real estate projects that redefine luxury living in Egypt." />
+
+    <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preconnect" href="https://connect.facebook.net" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=GFS+Didot&display=swap" rel="stylesheet" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://wealthholding-eg.com/" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "RealEstateAgent",
+        "name": "Wealth Holding Developments",
+        "url": "https://wealthholding-eg.com",
+        "logo": "https://wealthholding-eg.com/Icon_Wealth.svg",
+        "telephone": "+201121898883",
+        "email": "info@wealthholding-eg.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "EG"
+        },
+        "areaServed": "Egypt"
+      }
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        'script',
+        'https://connect.facebook.net/en_US/fbevents.js',
+      );
+      fbq('init', '812221158498234');
+      fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=812221158498234&ev=PageView&noscript=1"
+      />
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

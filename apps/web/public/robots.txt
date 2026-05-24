@@ -1,0 +1,10 @@
+# www.wealthholding-eg.com
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://wealthholding-eg.com/sitemap.xml
+
+# Disallow admin
+Disallow: /admin/
+Disallow: /api/

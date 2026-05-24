@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { MapPin, Building2, ArrowRight, ArrowDown } from 'lucide-react';
 import { getProjects, type Project } from '@/lib/api';
+import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { PageEnter } from '@/components/PageEnter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useGlobalLoading } from '@/contexts/LoadingContext';
@@ -48,19 +51,27 @@ export function HomePage() {
   }
 
   return (
-    <div className='min-h-screen  '>
+    <PageEnter className='min-h-screen'>
+      <Helmet>
+        <title>Wealth Holding Landing Pages</title>
+        <meta
+          name='description'
+          content='Project landing page selector for Wealth Holding campaigns.'
+        />
+        <meta name='robots' content='noindex,follow' />
+      </Helmet>
+      <Navbar />
       {/* Hero Section */}
-      <section className='relative  h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-burgundy/20 to-gray-900'>
-        {/* Background Image */}
+      <section className='relative h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-900 via-stone-800 to-gray-900'>
         <div
-          className=' [filter:blur(30px)_saturate(120%)]
-    scale-105 absolute inset-0 z-0 bg-no-repeat bg-cover bg-center'
+          className='scale-105 absolute inset-0 z-0 bg-no-repeat bg-cover bg-center'
           style={{
             backgroundImage: 'url(/home-hero-bg.jpg)',
           }}
         >
-          <div className='absolute inset-0 bg-black/40' />
+          <div className='absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60' />
         </div>
+        <div className='absolute inset-0 z-[1] opacity-[0.04]' style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
         {/* Content */}
         <div className='relative z-10 container mx-auto px-4 py-20'>
@@ -132,13 +143,14 @@ export function HomePage() {
                   Explore Projects
                   <ArrowDown className='ml-2 w-5 h-5 group-hover:animate-pulse group-hover:translate-y-0.5 transition-transform' />
                 </Button>
-                {/* <Button
+                <Button
                   size='lg'
-                  className='!border-2 border-primary/30  bg-primary/30   hover:!text-white   px-8 py-6 text-lg transition-all hover:border-primary'
+                  variant='outline'
+                  className='border-white/30 text-white bg-transparent hover:bg-white/10 hover:text-white px-8 py-6 text-lg'
                   onClick={() => window.open('tel:19640')}
                 >
                   Call Us: 19640
-                </Button> */}
+                </Button>
               </motion.div>
 
               {/* Stats */}
@@ -244,7 +256,7 @@ export function HomePage() {
                       <div className='flex items-center gap-4 text-sm text-stone-500'>
                         <div className='flex items-center gap-1'>
                           <MapPin className='w-4 h-4' />
-                          <span>{project.location}</span>
+                          <span>{project.locationText || project.location}</span>
                         </div>
                         <div className='flex items-center gap-1'>
                           <Building2 className='w-4 h-4' />
@@ -273,6 +285,6 @@ export function HomePage() {
       </section>
 
       <Footer />
-    </div>
+    </PageEnter>
   );
 }

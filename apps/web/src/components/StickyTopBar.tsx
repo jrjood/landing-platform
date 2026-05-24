@@ -44,7 +44,6 @@ export function StickyTopBar() {
             className='flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 transition hover:bg-white/20'
           >
             <Facebook className='h-4 w-4' />
-            <span className='hidden sm:inline'>Facebook</span>
           </a>
           <a
             href='https://www.instagram.com/wealthholding/'
@@ -54,7 +53,6 @@ export function StickyTopBar() {
             className='flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 transition hover:bg-white/20'
           >
             <Instagram className='h-4 w-4' />
-            <span className='hidden sm:inline'>Instagram</span>
           </a>
           <a
             href='https://www.linkedin.com/company/wealth-holding-developments/posts/?feedView=all'
@@ -64,7 +62,6 @@ export function StickyTopBar() {
             className='flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 transition hover:bg-white/20'
           >
             <Linkedin className='h-4 w-4' />
-            <span className='hidden sm:inline'>LinkedIn</span>
           </a>
         </div>
 
@@ -72,7 +69,7 @@ export function StickyTopBar() {
           href='https://wa.me/201121898883'
           target='_blank'
           rel='noreferrer'
-          className='flex items-center gap-1.5 rounded-full bg-[#25D366] px-3 py-1 text-white transition hover:brightness-110'
+          className='flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-white transition hover:bg-secondary'
         >
           <svg
             aria-hidden='true'

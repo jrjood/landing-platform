@@ -33,7 +33,7 @@ yarn-error.log*
 .project
 .classpath
 .settings/
-.vscode/
 
 # OS
 Thumbs.db
+*.pdf

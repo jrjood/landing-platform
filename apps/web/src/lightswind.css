@@ -14,10 +14,10 @@
 
 /* Light (default) theme variables */
 :root {
-  --primarylw: #173eff;
-  --primarylw-2: #3758f9;
-  --darklw: #11131b;
-  --darklw-2: #1a1d25;
+  --primarylw: var(--brand-red, #cc000a);
+  --primarylw-2: var(--brand-brown, #9b6d2c);
+  --darklw: var(--brand-ink, #17130e);
+  --darklw-2: #2d2115;
 
   /* HSL values for theme colors */
   --background: 0 0% 100%;
@@ -57,15 +57,15 @@
   --scrollbar-hover: 0 0% 65%;
 
   /* Custom named colors */
-  --greedy: #07eae6ff;
+  --greedy: var(--brand-brown, #9b6d2c);
 }
 
 /* Dark theme variables */
 .dark {
-  --primarylw: #173eff;
-  --primarylw-2: #3758f9;
-  --darklw: #11131b;
-  --darklw-2: #1a1d25;
+  --primarylw: var(--brand-red, #cc000a);
+  --primarylw-2: var(--brand-brown, #9b6d2c);
+  --darklw: var(--brand-ink, #17130e);
+  --darklw-2: #2d2115;
 
   /* HSL values for theme colors in dark mode */
   --background: 0 0% 0%;
@@ -103,7 +103,7 @@
   --scrollbar-hover: 0 0% 35%;
 
   /* Custom named colors (same as light, but can be overridden if needed) */
-  --greedy: #07eae6ff;
+  --greedy: var(--brand-brown, #9b6d2c);
 }
 
 /* ==========================================================================

@@ -66,7 +66,7 @@ export function AdminLoginPage() {
             <div className='flex justify-center mb-4'>
               <div className='flex h-16 w-16 items-center justify-center'>
                 <img
-                  src='/icon_Wealth.png'
+                  src='/logo-black.png'
                   alt='Wealth Holding Developments'
                   className='h-full w-full object-contain'
                 />

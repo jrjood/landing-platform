@@ -15,7 +15,10 @@ export function RouteLoadingTracker() {
       stopLoading();
     }, 400);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      stopLoading();
+    };
   }, [location.pathname, startLoading, stopLoading]);
 
   return null;

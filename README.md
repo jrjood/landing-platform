@@ -1,4 +1,8 @@
-docker compose up -d --build
+docker compose down -v
+docker compose up --build
+docker compose exec api-dev npm run seed
+
+ADMIN_EMAIL=admin@wealthholding-eg.com ADMIN_PASSWORD=YourSecurePassword123!
 
 # Landing Platform - Subdomain Real Estate Projects
 
@@ -194,7 +198,6 @@ Web runs on http://localhost:5173
 ### Step 1: Database Setup
 
 1. **Create MySQL Database** in cPanel:
-
    - Go to MySQL Databases
    - Create database: `username_landing_platform`
    - Create user and grant all privileges
@@ -219,7 +222,6 @@ npm run build
 ```
 
 2. **Upload to cPanel**:
-
    - The build creates a `dist` folder
    - Upload all contents of `apps/web/dist/` to your subdomain's document root
    - Example: `/home/username/public_html/sub.domain.com/`
@@ -263,12 +265,10 @@ npm run build
 ```
 
 2. **Upload API Files**:
-
    - Upload entire `apps/api` folder to a directory like `/home/username/landing-api/`
    - Upload node_modules or run `npm install --production` on server
 
 3. **Setup Node.js App in cPanel**:
-
    - Go to "Setup Node.js App"
    - Click "Create Application"
    - Node.js version: 18.x or higher
@@ -308,7 +308,6 @@ RewriteRule ^api/(.*)$ http://localhost:PORT/api/$1 [P,L]
 If cPanel doesn't support Node.js:
 
 1. Deploy API to external service:
-
    - Heroku
    - Railway.app
    - DigitalOcean App Platform
@@ -326,13 +325,11 @@ VITE_API_URL=https://your-api-service.herokuapp.com/api
 ### Step 4: Verify Deployment
 
 1. **Test Frontend**:
-
    - Visit `https://sub.domain.com`
    - Navigate to project pages
    - Submit a test lead
 
 2. **Test API**:
-
    - Visit `https://sub.domain.com/api/health` (or your API URL)
    - Should return `{"status":"ok","timestamp":"..."}`
 
@@ -345,19 +342,16 @@ VITE_API_URL=https://your-api-service.herokuapp.com/api
 ### Step 5: Post-Deployment
 
 1. **Change Admin Password**:
-
    - Login to phpMyAdmin
    - Update password hash in `admin_users` table
    - Or use bcrypt online tool to generate new hash
 
 2. **Update JWT Secret**:
-
    - Generate strong random secret
    - Update in API environment variables
    - Restart API application
 
 3. **Enable HTTPS**:
-
    - Most cPanel includes free Let's Encrypt SSL
    - Go to SSL/TLS Status
    - Install certificate for subdomain
@@ -392,7 +386,6 @@ VITE_API_URL=https://your-api-service.herokuapp.com/api
 - `payment_plan` - Payment plan details
 - `starting_price` - Starting price
 - `gallery` - JSON array of images
-- `faqs` - JSON array of FAQs
 - `created_at`, `updated_at` - Timestamps
 
 #### `leads`

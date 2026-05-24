@@ -57,6 +57,14 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
+  			brand: {
+  				brown: 'var(--brand-brown)',
+  				red: 'var(--brand-red)',
+  				cream: 'var(--brand-cream)',
+  				silver: 'var(--brand-silver)',
+  				ink: 'var(--brand-ink)',
+  				paper: 'var(--brand-paper)',
+  			},
   			green: {
   				main: 'hsl(var(--green-main))',
   			},
@@ -65,6 +73,9 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		fontFamily: {
+  			sans: ['Red Hat Display', 'Segoe UI', 'Arial', 'sans-serif'],
   		},
   		keyframes: {
   			'accordion-down': {

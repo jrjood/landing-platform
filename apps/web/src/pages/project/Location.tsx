@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Navigation, X } from 'lucide-react';
 import type { Project } from '@/lib/api';
 
 interface LocationProps {
@@ -8,7 +8,7 @@ interface LocationProps {
 
 function CountUp({
   value,
-  duration = 1600,
+  duration = 2600,
   start,
 }: {
   value: number;
@@ -22,6 +22,14 @@ function CountUp({
       setDisplayValue(0);
       return;
     }
+    if (
+      duration <= 0 ||
+      (typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+    ) {
+      setDisplayValue(value);
+      return;
+    }
 
     let rafId: number;
     const startedAt = performance.now();
@@ -29,7 +37,6 @@ function CountUp({
     const tick = (now: number) => {
       const progress = Math.min((now - startedAt) / duration, 1);
       setDisplayValue(Math.round(value * progress));
-
       if (progress < 1) {
         rafId = requestAnimationFrame(tick);
       }
@@ -43,12 +50,20 @@ function CountUp({
 }
 
 export function Location({ project }: LocationProps) {
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const locationImage =
+    project.locationImage ||
+    (project.location &&
+    (project.location.startsWith('http') || project.location.startsWith('/'))
+      ? project.location
+      : undefined);
+  const locationText = project.locationText || project.location;
   const accessTimes = {
     citra: [
       { minutes: 2, from: 'Mall of Arabia and the 26th of July Axis' },
       { minutes: 15, from: ' Sphinx Airport' },
       { minutes: 15, from: ' Grand Egyptian Museum' },
-      { minutes: 12, from: 'Smart Village' },
+      { minutes: 2, from: 'July 26th Axis' },
     ],
   };
 
@@ -64,80 +79,181 @@ export function Location({ project }: LocationProps) {
     const node = countersRef.current;
     if (!node) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStartCounting(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
+    let didStart = false;
+    const startNow = () => {
+      if (didStart) return;
+      didStart = true;
+      setStartCounting(true);
+    };
 
-    observer.observe(node);
-    return () => observer.disconnect();
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    ) {
+      startNow();
+      return;
+    }
+
+    let observer: IntersectionObserver | undefined;
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            startNow();
+            observer?.disconnect();
+          }
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -20% 0px' }
+      );
+      observer.observe(node);
+    }
+
+    const fallbackId = window.setTimeout(() => {
+      if (!didStart) startNow();
+    }, 1200);
+
+    const onVisibilityChange = () => {
+      if (didStart || document.visibilityState !== 'visible') return;
+      const rect = node.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if (inView) startNow();
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      observer?.disconnect();
+      window.clearTimeout(fallbackId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
   }, []);
 
   return (
-    <section className='panel bg-muted py-16  '>
+    <section id='location' className='project-location'>
       <div className='container mx-auto px-4'>
-        <div className='grid gap-10 lg:grid-cols-2 items-stretch'>
-          <div className='space-y-4 h-full flex flex-col'>
-            <h2 className='text-3xl font-semibold text-card-foreground tracking-wide uppercase'>
-              Location
-            </h2>
-            <div className='rounded-lg border border-primary/70 bg-white shadow-lg overflow-hidden h-full min-h-[300px]'>
-              {project.mapEmbedUrl ? (
+        <div className='project-location__shell'>
+          <div className='project-location__copy' ref={countersRef}>
+            <p className='brand-eyebrow'>Location</p>
+            <h2>Connected to Everything That Matters</h2>
+            <p>
+              Strategically located with excellent connectivity to business
+              districts, top schools, hospitals, shopping and entertainment hubs.
+            </p>
+
+            {list.length > 0 ? (
+              <div className='project-location__times'>
+                {list.map((item) => (
+                  <div key={item.from}>
+                    <MapPin className='h-4 w-4' />
+                    <span>
+                      <CountUp value={item.minutes} start={startCounting} /> mins to {item.from.trim()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              locationText && (
+                <div className='project-location__times'>
+                  <div>
+                    <MapPin className='h-4 w-4' />
+                    <span>{locationText}</span>
+                  </div>
+                </div>
+              )
+            )}
+
+            <button
+              type='button'
+              onClick={() => locationImage && setIsLocationOpen(true)}
+              className='project-button project-button--outline'
+            >
+              View on Map
+            </button>
+          </div>
+
+          <div className='project-location__map'>
+            <div className='project-location__map-inner'>
+              {locationImage ? (
+                <button
+                  type='button'
+                  onClick={() => setIsLocationOpen(true)}
+                  className='group relative block h-full w-full focus:outline-none'
+                  aria-label='View location image in full screen'
+                >
+                  <img
+                    src={locationImage}
+                    alt={`${project.title} location`}
+                    className='h-full w-full object-cover'
+                  />
+                </button>
+              ) : project.mapEmbedUrl ? (
                 <iframe
                   src={project.mapEmbedUrl}
                   className='h-full w-full'
-                  style={{ border: 0, filter: 'grayscale(5%) contrast(110%)' }}
+                  style={{ border: 0, filter: 'grayscale(10%) contrast(105%)' }}
                   allowFullScreen
                   loading='lazy'
                   referrerPolicy='no-referrer-when-downgrade'
                   title={`${project.title} location map`}
                 />
               ) : (
-                <div className='flex h-[520px] items-center justify-center bg-slate-50'>
-                  <div className='text-center text-primary'>
-                    <MapPin className='w-12 h-12 mx-auto mb-4' />
-                    <p className='font-medium'>{project.location}</p>
+                <div className='flex h-full min-h-[300px] items-center justify-center bg-gradient-to-br from-primary/[0.02] to-secondary/[0.02] p-8'>
+                  <div className='text-center'>
+                    <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10'>
+                      <MapPin className='h-7 w-7 text-primary' />
+                    </div>
+                    {locationText && (
+                      <p className='text-sm font-medium text-muted-foreground'>
+                        {locationText}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
             </div>
-          </div>
 
-          <div className='space-y-4 h-full flex flex-col' ref={countersRef}>
-            <h2 className='text-2xl md:text-3xl font-semibold text-card-foreground leading-tight'>
-              At the heart of green revolution
-            </h2>
-            <div className='grid grid-cols-2 lg:grid-cols-2 gap-4'>
-              {list.map((item) => (
-                <div
-                  key={item.from}
-                  className='rounded-lg border border-primary/70 bg-white p-5 shadow-sm'
-                >
-                  <div className='flex items-baseline gap-3 text-primary '>
-                    <span className='text-5xl font-semibold leading-none'>
-                      <CountUp value={item.minutes} start={startCounting} />
-                    </span>
-                    <span className='text-lg font-serif italic uppercase tracking-wide'>
-                      mins
-                    </span>
+            {locationText && (
+              <div className='project-location__pin project-location__pin--center'>
+                <div className='flex items-start gap-2'>
+                  <Navigation className='mt-0.5 h-4 w-4 shrink-0 text-primary' />
+                  <div>
+                    <p>
+                      {project.title}
+                    </p>
+                    <strong>{locationText}</strong>
                   </div>
-                  <p className='mt-3 text-sm text-gray-700 uppercase tracking-wide'>
-                    From:
-                  </p>
-                  <p className='text-base font-semibold text-gray-900'>
-                    {item.from}.
-                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Fullscreen modal */}
+      {isLocationOpen && locationImage && (
+        <div
+          className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4'
+          onClick={() => setIsLocationOpen(false)}
+        >
+          <div
+            className='relative max-h-[90vh] w-full max-w-5xl'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type='button'
+              onClick={() => setIsLocationOpen(false)}
+              className='absolute -top-3 -right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white shadow-lg backdrop-blur hover:bg-white/25 transition'
+              aria-label='Close full screen location'
+            >
+              <X className='h-5 w-5' />
+            </button>
+            <img
+              src={locationImage}
+              alt={`${project.title} location full screen`}
+              className='max-h-[85vh] w-full object-contain rounded-lg border border-white/10 bg-black shadow-2xl'
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -3,13 +3,13 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files from web workspace
-COPY apps/web/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy web source code
-COPY apps/web/ ./
+COPY . ./
 
 # Expose port
 EXPOSE 5173

@@ -1,8 +1,8 @@
 .pixelated-image-card {
-  background-color: #222;
-  color: #fff;
+  background-color: var(--brand-ink);
+  color: var(--brand-cream);
   border-radius: var(--radius);
-  border: 2px solid #9d9d9dff;
+  border: 2px solid var(--brand-silver);
   width: 300px;
   max-width: 100%;
   position: relative;

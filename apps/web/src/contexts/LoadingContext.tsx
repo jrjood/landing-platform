@@ -2,7 +2,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -20,6 +22,10 @@ const LoadingContext = createContext<LoadingContextValue | undefined>(
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const [activeCount, setActiveCount] = useState(0);
+  const countRef = useRef(activeCount);
+  countRef.current = activeCount;
+
+  const isLoading = activeCount > 0;
 
   const startLoading = useCallback(() => {
     setActiveCount((count) => count + 1);
@@ -29,7 +35,16 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     setActiveCount((count) => (count > 0 ? count - 1 : 0));
   }, []);
 
-  const isLoading = activeCount > 0;
+  // Safety: auto-reset after 8s to prevent stuck overlay
+  useEffect(() => {
+    if (!isLoading) return;
+    const timer = setTimeout(() => {
+      if (countRef.current > 0) {
+        setActiveCount(0);
+      }
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const value = useMemo(
     () => ({
