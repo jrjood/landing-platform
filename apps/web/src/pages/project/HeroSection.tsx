@@ -130,7 +130,7 @@ export function HeroSection({ project }: HeroSectionProps) {
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: 'easeOut' }}
-            className='w-full max-w-xl mx-auto lg:mx-0 lg:ml-auto'
+            className='w-full max-w-lg mx-auto lg:mx-0 lg:ml-auto'
           >
             <div
               id='contact-form'
