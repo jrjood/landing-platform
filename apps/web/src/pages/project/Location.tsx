@@ -129,89 +129,93 @@ export function Location({ project }: LocationProps) {
 
   return (
     <section id='location' className='project-location'>
-      <div className='container mx-auto px-4'>
-        <div className='project-location__shell'>
-          <div className='project-location__copy' ref={countersRef}>
-            <p className='brand-eyebrow'>Location</p>
-            <h2>Connected to Everything That Matters</h2>
-            <p>
-              Strategically located with excellent connectivity to business
-              districts, top schools, hospitals, shopping and entertainment
-              hubs.
-            </p>
+      <div className='project-location__shell'>
+        <div className='project-location__copy' ref={countersRef}>
+          <p className='brand-eyebrow'>Location</p>
+          <h2>Connected to Everything That Matters</h2>
+          <p>
+            Strategically located with excellent connectivity to business
+            districts, top schools, hospitals, shopping and entertainment hubs.
+          </p>
 
-            {list.length > 0 ? (
-              <div className='project-location__times'>
-                {list.map((item) => (
-                  <div key={item.from}>
-                    <MapPin className='h-4 w-4' />
-                    <span>
-                      <CountUp value={item.minutes} start={startCounting} />{' '}
-                      mins to {item.from.trim()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              locationText && (
-                <div className='project-location__times'>
-                  <div>
-                    <MapPin className='h-4 w-4' />
-                    <span>{locationText}</span>
-                  </div>
+          {list.length > 0 ? (
+            <div className='project-location__times'>
+              {list.map((item) => (
+                <div key={item.from}>
+                  <MapPin className='h-4 w-4' />
+                  <span>
+                    <CountUp value={item.minutes} start={startCounting} /> mins
+                    to {item.from.trim()}
+                  </span>
                 </div>
-              )
+              ))}
+            </div>
+          ) : (
+            locationText && (
+              <div className='project-location__times'>
+                <div>
+                  <MapPin className='h-4 w-4' />
+                  <span>{locationText}</span>
+                </div>
+              </div>
+            )
+          )}
+
+          <button
+            type='button'
+            onClick={() => locationImage && setIsLocationOpen(true)}
+            className='project-button project-button--outline'
+          >
+            View on Map
+          </button>
+        </div>
+
+        <div className='project-location__map'>
+          <div className='project-location__map-inner'>
+            {locationImage ? (
+              <button
+                type='button'
+                onClick={() => setIsLocationOpen(true)}
+                className='group relative block h-full w-full focus:outline-none'
+                aria-label='View location image in full screen'
+              >
+                <img
+                  src={locationImage}
+                  alt={`${project.title} location`}
+                  className='h-full w-full object-cover'
+                />
+              </button>
+            ) : project.mapEmbedUrl ? (
+              <iframe
+                src={project.mapEmbedUrl}
+                className='h-full w-full'
+                style={{ border: 0, filter: 'grayscale(10%) contrast(105%)' }}
+                allowFullScreen
+                loading='lazy'
+                referrerPolicy='no-referrer-when-downgrade'
+                title={`${project.title} location map`}
+              />
+            ) : (
+              <div className='flex h-full min-h-[300px] items-center justify-center bg-gradient-to-br from-primary/[0.02] to-secondary/[0.02] p-8'>
+                <div className='text-center'>
+                  <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10'>
+                    <MapPin className='h-7 w-7 text-primary' />
+                  </div>
+                  {locationText && (
+                    <p className='text-sm font-medium text-muted-foreground'>
+                      <span>{locationText}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
             )}
 
-            <button
-              type='button'
-              onClick={() => locationImage && setIsLocationOpen(true)}
-              className='project-button project-button--outline'
-            >
-              View on Map
-            </button>
-          </div>
-
-          <div className='project-location__map'>
-            <div className='project-location__map-inner'>
-              {locationImage ? (
-                <button
-                  type='button'
-                  onClick={() => setIsLocationOpen(true)}
-                  className='group relative block h-full w-full focus:outline-none'
-                  aria-label='View location image in full screen'
-                >
-                  <img
-                    src={locationImage}
-                    alt={`${project.title} location`}
-                    className='h-full w-full object-cover'
-                  />
-                </button>
-              ) : project.mapEmbedUrl ? (
-                <iframe
-                  src={project.mapEmbedUrl}
-                  className='h-full w-full'
-                  style={{ border: 0, filter: 'grayscale(10%) contrast(105%)' }}
-                  allowFullScreen
-                  loading='lazy'
-                  referrerPolicy='no-referrer-when-downgrade'
-                  title={`${project.title} location map`}
-                />
-              ) : (
-                <div className='flex h-full min-h-[300px] items-center justify-center bg-gradient-to-br from-primary/[0.02] to-secondary/[0.02] p-8'>
-                  <div className='text-center'>
-                    <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10'>
-                      <MapPin className='h-7 w-7 text-primary' />
-                    </div>
-                    {locationText && (
-                      <p className='text-sm font-medium text-muted-foreground'>
-                        {locationText}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            {locationText && (
+              <div className='project-location__pin project-location__pin--center'>
+                <p>{project.title}</p>
+                <strong>{locationText}</strong>
+              </div>
+            )}
           </div>
         </div>
       </div>
