@@ -1,5 +1,3 @@
-import { Building, Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
-
 const socials = [
   {
     href: 'https://www.facebook.com/WealthHolding/',
@@ -27,122 +25,47 @@ export function Footer() {
   return (
     <footer className='border-t bg-gradient-to-b from-background to-muted/40'>
       <div className='container mx-auto px-4'>
-        <div className='grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4'>
-          {/* Brand */}
-          <div className='space-y-4'>
-            <a
-              href='https://wealthholding-eg.com'
-              aria-label='Wealth Holding'
-              className='inline-flex w-32 items-center'
-            >
-                <img
-                  src='/logo1-black.png'
-                  alt='Wealth Holding Developments'
-                  className='h-full w-full object-contain'
-                />
-            </a>
-            <p className='text-xs leading-relaxed text-muted-foreground'>
-              Premium real estate developments redefining luxury living in Egypt's
-              most prestigious locations with world-class design and exceptional
-              investment opportunities.
-            </p>
-          </div>
+        <div className='flex items-center justify-between py-8'>
+          <a
+            href='https://wealthholding-eg.com'
+            aria-label='Wealth Holding'
+            className='inline-flex w-28 items-center'
+          >
+            <img
+              src='/logo1-black.png'
+              alt='Wealth Holding Developments'
+              className='h-full w-full object-contain'
+            />
+          </a>
 
-          {/* Quick Links */}
-          <div className='space-y-4'>
-            <h4 className='text-xs font-semibold uppercase tracking-[0.2em] text-foreground'>
-              Quick Links
-            </h4>
-            <ul className='space-y-2.5'>
-              {['Home', 'Projects', 'About Us', 'Contact'].map((link) => (
-                <li key={link}>
-                  <a
-                    href={link === 'Home' ? '/' : `/${link.toLowerCase().replace(' ', '-')}`}
-                    className='group inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground'
-                  >
-                    <ArrowUpRight className='h-2.5 w-2.5 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all' />
-                    <span>{link}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className='space-y-4'>
-            <h4 className='text-xs font-semibold uppercase tracking-[0.2em] text-foreground'>
-              Contact
-            </h4>
-            <ul className='space-y-3'>
-              <li>
-                <a
-                  href='tel:19640'
-                  className='group inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground'
+          <div className='flex items-center gap-1.5'>
+            {socials.map(({ href, label, path }) => (
+              <a
+                key={label}
+                href={href}
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label={label}
+                className='flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:bg-primary/5'
+              >
+                <svg
+                  className='h-4 w-4'
+                  fill='currentColor'
+                  viewBox='0 0 24 24'
                 >
-                  <Phone className='h-3.5 w-3.5 text-primary' />
-                  <span>19640</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href='mailto:info@wealthholding-eg.com'
-                  className='group inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground'
-                >
-                  <Mail className='h-3.5 w-3.5 text-primary' />
-                  <span>info@wealthholding-eg.com</span>
-                </a>
-              </li>
-              <li className='inline-flex items-start gap-2 text-xs text-muted-foreground'>
-                <MapPin className='h-3.5 w-3.5 mt-0.5 shrink-0 text-primary' />
-                <span>New Cairo, Egypt</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div className='space-y-4'>
-            <h4 className='text-xs font-semibold uppercase tracking-[0.2em] text-foreground'>
-              Follow Us
-            </h4>
-            <div className='flex flex-wrap gap-2'>
-              {socials.map(({ href, label, path }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  aria-label={label}
-                  className='flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:bg-primary/5'
-                >
-                  <svg className='h-4 w-4' fill='currentColor' viewBox='0 0 24 24'>
-                    <path d={path} />
-                  </svg>
-                </a>
-              ))}
-            </div>
-            <p className='text-[10px] leading-relaxed text-muted-foreground'>
-              Follow us on social media for the latest projects, offers, and
-              community updates.
-            </p>
+                  <path d={path} />
+                </svg>
+              </a>
+            ))}
           </div>
         </div>
 
         <div className='border-t py-4'>
           <div className='flex flex-col gap-2 text-center text-[11px] text-muted-foreground md:flex-row md:items-center md:justify-between md:text-left'>
-            <p>&copy; {new Date().getFullYear()} Wealth Holding Developments. All rights reserved.</p>
-            <div className='flex items-center justify-center gap-3'>
-              <span>Built with</span>
-              <Building className='h-3 w-3 text-primary' />
-              <span>by</span>
-              <a
-                href='https://portfolio-webpage-jrd.vercel.app/'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='font-semibold text-primary transition-colors hover:text-primary/80'
-              >
-                JoDev
-              </a>
-            </div>
+            <p>
+              &copy; {new Date().getFullYear()} Wealth Holding Developments. All
+              rights reserved.
+            </p>
           </div>
         </div>
       </div>

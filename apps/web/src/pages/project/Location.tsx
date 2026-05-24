@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Navigation, X } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 import type { Project } from '@/lib/api';
 
 interface LocationProps {
@@ -103,7 +103,7 @@ export function Location({ project }: LocationProps) {
             observer?.disconnect();
           }
         },
-        { threshold: 0.1, rootMargin: '0px 0px -20% 0px' }
+        { threshold: 0.1, rootMargin: '0px 0px -20% 0px' },
       );
       observer.observe(node);
     }
@@ -136,7 +136,8 @@ export function Location({ project }: LocationProps) {
             <h2>Connected to Everything That Matters</h2>
             <p>
               Strategically located with excellent connectivity to business
-              districts, top schools, hospitals, shopping and entertainment hubs.
+              districts, top schools, hospitals, shopping and entertainment
+              hubs.
             </p>
 
             {list.length > 0 ? (
@@ -145,7 +146,8 @@ export function Location({ project }: LocationProps) {
                   <div key={item.from}>
                     <MapPin className='h-4 w-4' />
                     <span>
-                      <CountUp value={item.minutes} start={startCounting} /> mins to {item.from.trim()}
+                      <CountUp value={item.minutes} start={startCounting} />{' '}
+                      mins to {item.from.trim()}
                     </span>
                   </div>
                 ))}
@@ -210,20 +212,6 @@ export function Location({ project }: LocationProps) {
                 </div>
               )}
             </div>
-
-            {locationText && (
-              <div className='project-location__pin project-location__pin--center'>
-                <div className='flex items-start gap-2'>
-                  <Navigation className='mt-0.5 h-4 w-4 shrink-0 text-primary' />
-                  <div>
-                    <p>
-                      {project.title}
-                    </p>
-                    <strong>{locationText}</strong>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

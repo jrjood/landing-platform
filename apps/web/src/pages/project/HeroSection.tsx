@@ -1,15 +1,31 @@
-import { motion } from 'framer-motion';
-import { BadgeCheck, Building2, Lock, MapPin, Sparkles } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { BadgeCheck, Building2, Lock, MapPin, PhoneCall } from 'lucide-react';
 import type { Project } from '@/lib/api';
 import { LeadForm } from '@/components/LeadForm';
 import { getAmenityIcon } from '@/lib/amenityIcons';
+import { ShineButton } from '@/components/lightswind/shine-button';
 
 interface HeroSectionProps {
   project: Project;
 }
 
 export function HeroSection({ project }: HeroSectionProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const mobileHero = project.heroImageMobile ?? project.heroImage;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, 320]);
+  const topbarY = useTransform(scrollYProgress, [0, 1], [0, -420]);
+
+  const scrollToLeadForm = () => {
+    const target = document.getElementById('contact-form');
+    if (!target) return;
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+  };
 
   const fallbackHighlights = [
     {
@@ -30,13 +46,15 @@ export function HeroSection({ project }: HeroSectionProps) {
 
   return (
     <section
+      ref={sectionRef}
       className='project-hero relative flex min-h-screen items-center overflow-hidden'
     >
       <motion.div
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
+        style={{ y: backgroundY }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
-        className='absolute inset-0 z-0'
+        className='absolute -inset-y-16 inset-x-0 z-0'
       >
         <div className='absolute inset-0'>
           <picture>
@@ -51,8 +69,37 @@ export function HeroSection({ project }: HeroSectionProps) {
         <div className='project-hero__shade absolute inset-0' />
       </motion.div>
 
+      <motion.div className='project-hero__top-wrap' style={{ y: topbarY }}>
+        <div className='project-hero__topbar'>
+          <a
+            href='https://wealthholding-eg.com'
+            className='project-hero__logo'
+            aria-label='Wealth Holding'
+          >
+            <img
+              src='/logo1-white.png'
+              alt='Wealth Holding'
+              className='h-full w-full object-contain'
+            />
+          </a>
+
+          <ShineButton
+            type='button'
+            onClick={scrollToLeadForm}
+            label={
+              <>
+                <PhoneCall className='ml-1.5 h-4 w-4' /> Enquire Now
+              </>
+            }
+            size='lg'
+            bgColor='linear-gradient(325deg, #c69a5c 0%, #252017 55%, #c69a5c 90%)'
+            className='lead-form__submit project-hero__enquire h-9 px-3 text-[10px]'
+          />
+        </div>
+      </motion.div>
+
       <div className='relative z-10 container mx-auto px-4 pb-16 pt-28 md:pt-32'>
-        <div className='grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]'>
+        <div className='grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]'>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,14 +130,18 @@ export function HeroSection({ project }: HeroSectionProps) {
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: 'easeOut' }}
-            className='w-full max-w-md mx-auto lg:mx-0 lg:ml-auto'
+            className='w-full max-w-xl mx-auto lg:mx-0 lg:ml-auto'
           >
             <div
               id='contact-form'
               className='project-enquiry-card lead-form-shell relative overflow-hidden'
             >
-              <div className='p-6 md:p-8'>
+              <div className='p-7 md:p-10'>
                 <div className='text-center'>
+                  <span className='project-enquiry-card__eyebrow'>
+                    Enquire Now
+                  </span>
+                  <h3>Book Your Private Consultation</h3>
                   <p>
                     Fill in your details and our team will get in touch with
                     you.
@@ -106,27 +157,6 @@ export function HeroSection({ project }: HeroSectionProps) {
           </motion.div>
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className='absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block'
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className='flex flex-col items-center gap-2'
-        >
-          <span className='text-xs text-white/50 uppercase tracking-widest'>
-            Scroll
-          </span>
-          <div className='w-5 h-8 rounded-full border border-white/30 flex items-start justify-center p-1.5'>
-            <div className='w-1 h-2 rounded-full bg-white/60' />
-          </div>
-        </motion.div>
-      </motion.div>
-      <Sparkles className='project-hero__mark h-5 w-5' />
     </section>
   );
 }

@@ -2,7 +2,9 @@ import { Project } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { ArrowDownToLine } from 'lucide-react';
 
-interface ProjectDetailsProps { project: Project; }
+interface ProjectDetailsProps {
+  project: Project;
+}
 
 export function ProjectDetailsSection({ project }: ProjectDetailsProps) {
   const descriptionParts = project.description
@@ -11,7 +13,8 @@ export function ProjectDetailsSection({ project }: ProjectDetailsProps) {
     .filter(Boolean)
     .slice(0, 2);
 
-  const galleryImage = project.aboutImage || project.gallery[0]?.url || project.heroImage;
+  const galleryImage =
+    project.aboutImage || project.gallery[0]?.url || project.heroImage;
 
   return (
     <section
@@ -28,9 +31,7 @@ export function ProjectDetailsSection({ project }: ProjectDetailsProps) {
         >
           <div className='project-about__intro'>
             <p className='brand-eyebrow'>About The Project</p>
-            <h2 className='brand-title mt-3'>
-              {project.subtitle}
-            </h2>
+            <h2 className='brand-title mt-3'>{project.subtitle}</h2>
             <div className='project-about__body'>
               {descriptionParts.map((part, idx) => (
                 <p key={idx}>{part}.</p>
@@ -43,7 +44,7 @@ export function ProjectDetailsSection({ project }: ProjectDetailsProps) {
                 rel='noopener noreferrer'
                 className='project-button project-button--dark'
               >
-                Know More
+                Download Brochure
                 <ArrowDownToLine className='h-4 w-4' />
               </a>
             )}

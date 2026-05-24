@@ -1,97 +1,67 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { createLead } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PhoneCall, X, Loader2 } from 'lucide-react';
-
-const schema = z.object({
-  name: z.string().min(2, 'Name is required'),
-  phone: z.string().min(10, 'Valid phone required'),
-});
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { PhoneCall } from 'lucide-react';
 
 interface StickyLeadBarProps {
   projectSlug: string;
   projectTitle: string;
 }
 
-export function StickyLeadBar({ projectSlug, projectTitle }: StickyLeadBarProps) {
-  const [visible, setVisible] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function StickyLeadBar({ projectTitle }: StickyLeadBarProps) {
+  const [showAfterHero, setShowAfterHero] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    resolver: zodResolver(schema),
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      const hero = document.querySelector<HTMLElement>('.project-hero');
+      if (!hero) {
+        setShowAfterHero(window.scrollY > window.innerHeight * 0.85);
+        return;
+      }
 
-  const onSubmit = async (data: any) => {
-    setIsSubmitting(true);
-    try {
-      await createLead({
-        name: data.name,
-        phone: data.phone,
-        projectSlug,
-        sourceUrl: window.location.href,
-        landingHost: window.location.hostname,
-        preferredContactWay: 'whatsapp',
-      });
-      toast.success("Inquiry submitted! We'll call you shortly.");
-      reset();
-    } catch {
-      toast.error('Submission failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+      setShowAfterHero(hero.getBoundingClientRect().bottom <= 0);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const scrollToLeadForm = () => {
+    const target = document.getElementById('contact-form');
+    if (!target) return;
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
   };
 
   return (
     <AnimatePresence>
-      {visible && (
+      {showAfterHero && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className='fixed bottom-0 left-0 right-0 z-40 border-t bg-white/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.08)] lg:hidden'
+          initial={{ y: 44, x: 18, opacity: 0, scale: 0.78 }}
+          animate={{ y: 0, x: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 24, x: 10, opacity: 0, scale: 0.9 }}
+          transition={{
+            type: 'spring',
+            stiffness: 420,
+            damping: 28,
+            mass: 0.7,
+          }}
+          className='fixed bottom-5 right-5 z-40 md:bottom-6 md:right-6'
         >
-          <div className='container mx-auto px-4 py-3'>
-            <div className='flex items-center gap-3'>
-              <div className='flex-1 min-w-0'>
-                <p className='text-xs font-semibold text-foreground truncate'>{projectTitle}</p>
-                <p className='text-[10px] text-muted-foreground'>Request a call back</p>
-              </div>
-              <form onSubmit={handleSubmit(onSubmit)} className='flex items-center gap-2 flex-1'>
-                <div className='relative flex-1'>
-                  <Input
-                    {...register('name')}
-                    placeholder='Name *'
-                    className={`h-9 text-xs ${errors.name ? 'border-destructive' : ''}`}
-                  />
-                </div>
-                <div className='relative flex-1'>
-                  <Input
-                    {...register('phone')}
-                    placeholder='Phone *'
-                    className={`h-9 text-xs ${errors.phone ? 'border-destructive' : ''}`}
-                    type='tel'
-                  />
-                </div>
-                <Button type='submit' size='sm' className='h-9 whitespace-nowrap gap-1' disabled={isSubmitting}>
-                  {isSubmitting
-                    ? <Loader2 className='w-3 h-3 animate-spin' />
-                    : <PhoneCall className='w-3 h-3' />
-                  }
-                  <span className='text-xs'>Call Me</span>
-                </Button>
-              </form>
-              <button onClick={() => setVisible(false)} className='flex-shrink-0 p-1' aria-label='Close'>
-                <X className='w-4 h-4 text-muted-foreground hover:text-foreground transition-colors' />
-              </button>
-            </div>
-          </div>
+          <button
+            type='button'
+            onClick={scrollToLeadForm}
+            className='lead-form__submit project-hero__enquire project-floating-enquire'
+            aria-label={`Enquire now about ${projectTitle}`}
+          >
+            <PhoneCall className='h-4 w-4' />
+            <span>Enquire Now</span>
+          </button>
         </motion.div>
       )}
     </AnimatePresence>

@@ -111,7 +111,10 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className='lead-form space-y-3'>
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      className='lead-form space-y-4'
+    >
       <input
         type='text'
         {...register('honeypot')}
@@ -133,7 +136,7 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
             id='name'
             placeholder='Full Name *'
             {...register('name')}
-            className={`lead-form__input h-11 text-sm focus-visible:ring-0 ${
+            className={`lead-form__input h-14 text-base focus-visible:ring-0 ${
               errors.name
                 ? 'border-destructive ring-1 ring-destructive/30'
                 : 'border-white/50'
@@ -151,7 +154,7 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
             type='tel'
             placeholder='Phone Number *'
             {...register('phone')}
-            className={`lead-form__input h-11 text-sm focus-visible:ring-0 ${
+            className={`lead-form__input h-14 text-base focus-visible:ring-0 ${
               errors.phone
                 ? 'border-destructive ring-1 ring-destructive/30'
                 : 'border-white/50'
@@ -169,7 +172,7 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
             type='email'
             placeholder='Email'
             {...register('email')}
-            className={`lead-form__input h-11 text-sm focus-visible:ring-0 ${
+            className={`lead-form__input h-14 text-base focus-visible:ring-0 ${
               errors.email
                 ? 'border-destructive ring-1 ring-destructive/30'
                 : 'border-white/50'
@@ -180,7 +183,7 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
       </motion.div>
 
       {isSubmitting ? (
-        <Button type='submit' size='lg' className='h-11 w-full px-0' disabled>
+        <Button type='submit' size='lg' className='h-14 w-full px-0 text-base' disabled>
           <span className='flex items-center justify-center gap-2 w-full'>
             <Loader2 className='h-4 w-4 animate-spin' />
             Submitting...
@@ -195,8 +198,8 @@ export function LeadForm({ projectSlug }: LeadFormProps) {
             </>
           }
           size='lg'
-          bgColor='linear-gradient(325deg, #c69a5c 0%, #f3d8a0 55%, #c69a5c 90%)'
-          className='lead-form__submit h-12 w-full text-sm'
+          bgColor='linear-gradient(325deg, #c69a5c 0%, #252017 55%, #c69a5c 90%)'
+          className='lead-form__submit h-14 w-full text-base'
         />
       )}
     </form>

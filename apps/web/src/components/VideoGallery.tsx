@@ -109,12 +109,9 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [] }) => {
           )}
 
           <div className='video-reference__overlay'>
-            <motion.div
-              whileHover={{ scale: 1.08 }}
-              className='video-reference__play'
-            >
+            <div className='video-reference__play'>
               <Play className='h-8 w-8' />
-            </motion.div>
+            </div>
           </div>
         </motion.button>
 

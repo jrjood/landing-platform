@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getProjectBySlug, type Project } from '@/lib/api';
-import { Navbar } from '@/components/Navbar';
 import { PageEnter } from '@/components/PageEnter';
 import { Footer } from '@/components/Footer';
 import { HeroSection } from '@/pages/project/HeroSection';
@@ -140,7 +139,6 @@ export function ProjectPage({ forcedSlug }: ProjectPageProps) {
       </Helmet>
 
       <PageEnter className='project-brochure-page min-h-screen bg-background pb-24 lg:pb-0'>
-        <Navbar />
         <HeroSection project={project} />
         <ProjectDetailsSection project={project} />
         <Location project={project} />
