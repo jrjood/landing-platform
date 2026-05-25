@@ -15,7 +15,8 @@ const navItems = [
 ];
 
 export function ProtectedRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthReady } = useAuth();
+  if (!isAuthReady) return null;
   if (!isAuthenticated) return <Navigate to='/admin/login' replace />;
   return <AdminLayout />;
 }

@@ -88,7 +88,7 @@ INSERT INTO projects (
   'citra',
   'Citra',
   'The Heart of the Green, The Breath of the Land',
-  'Citra Residence – New Zayed is Wealth Holding’s first villa residential development in West Cairo. Spanning over 30 acres with 85% dedicated to greenery and water features, Citra offers a calm, private, and well-balanced living environment. Inspired by the symbolism of citrine — the stone of the sun and wealth — Citra reflects a lifestyle where value is defined by space, light, serenity, and lasting legacy.',
+  'Citra Residence - New Zayed is Wealth Holding''s first villa residential development in West Cairo. Spanning over 30 acres with 85% dedicated to greenery and water features, Citra offers a calm, private, and well-balanced living environment. Inspired by the symbolism of citrine - the stone of the sun and wealth - Citra reflects a lifestyle where value is defined by space, light, serenity, and lasting legacy.',
   'Citra New Zayed Villas | Wealth Holding Developments',
   'Explore Citra Residence in New Zayed: a green villa community by Wealth Holding with campaign details, gallery, location, and inquiry form.',
   'Citra New Zayed Villas',
@@ -203,21 +203,18 @@ ON DUPLICATE KEY UPDATE
 
 UPDATE projects SET developerId = @wealth_developer_id WHERE developerId IS NULL;
 
--- Leads (matches live data). Clear existing to keep this snapshot idempotent.
-DELETE FROM leads;
-
 SET @citra_id = (SELECT id FROM projects WHERE slug = 'citra');
 SET @nile_id = (SELECT id FROM projects WHERE slug = 'nile-view-residence');
 SET @alex_id = (SELECT id FROM projects WHERE slug = 'alexandria-coastal-resort');
 
 -- Project videos (using the former static gallery entries)
-DELETE FROM project_videos;
+DELETE FROM project_videos WHERE projectId IN (@citra_id, @nile_id, @alex_id);
 
 INSERT INTO project_videos (projectId, title, category, thumbnailUrl, videoUrl, description, aspectRatio, sortOrder)
 VALUES
-(@citra_id, 'Citra', 'Film', 'https://drive.google.com/thumbnail?id=1H_QeJVTMSzfpnoDFhlXhYazXtuPiUbf2&sz=w1000', 'https://drive.google.com/file/d/1H_QeJVTMSzfpnoDFhlXhYazXtuPiUbf2/view?usp=sharing', 'Citra Residence – New Zayed is Wealth Holding's first villa residential development in West Cairo.\nSpanning over 30 acres with 85% dedicated to greenery and water features, Citra offers a calm, private, and well-balanced living environment.', '16 / 9', 1);
+(@citra_id, 'Citra', 'Film', 'https://drive.google.com/thumbnail?id=1H_QeJVTMSzfpnoDFhlXhYazXtuPiUbf2&sz=w1000', 'https://drive.google.com/file/d/1H_QeJVTMSzfpnoDFhlXhYazXtuPiUbf2/view?usp=sharing', 'Citra Residence - New Zayed is Wealth Holding''s first villa residential development in West Cairo.\nSpanning over 30 acres with 85% dedicated to greenery and water features, Citra offers a calm, private, and well-balanced living environment.', '16 / 9', 1);
 
-DELETE FROM payment_plans;
+DELETE FROM payment_plans WHERE projectId IN (@citra_id, @nile_id, @alex_id);
 INSERT INTO payment_plans (projectId, title, downPayment, installments, years, deliveryDate, startingPrice, promotionalOffer, badge, sortOrder)
 VALUES
 (@citra_id, 'Launch Campaign Plan', '10%', 'Equal installments', 'Up to 10 years', 'By phase', 'Ask sales team', 'Limited launch availability', 'Launch offer', 1),
@@ -259,24 +256,9 @@ VALUES
 (@alex_id, 'Family Escape', 'Serviced chalets and villas', 'family', 2),
 (@alex_id, 'Resort Amenities', 'Beach, pools, and dining', 'sparkles', 3);
 
-DELETE FROM media_assets;
+DELETE FROM media_assets WHERE projectId IN (@citra_id, @nile_id, @alex_id);
 INSERT INTO media_assets (projectId, url, altText, title, type, category, sortOrder)
 VALUES
 (@citra_id, '/Citra/hero.jpg', 'Citra campaign hero visual', 'Hero', 'image', 'hero', 1),
 (@citra_id, '/Citra/location.jpg', 'Citra location map visual', 'Location', 'image', 'location', 2),
-(@citra_id, '/Citra/mplan.jpeg', 'Citra master plan', 'Master Plan', 'masterplan', 'masterplan', 3),
-(@citra_id, '/Citra Brochure.pdf', 'Citra brochure PDF', 'Brochure', 'brochure', 'brochure', 4);
-
-INSERT INTO leads (
-  name,
-  phone,
-  email,
-  job_title,
-  preferred_contact_way,
-  unit_type,
-  message,
-  projectId,
-  status
-) VALUES
-('Asiya Hosny', '01013559895', 'Asiahosny4@gmail.com', NULL, 'whatsapp', 'Twin Villa', NULL, @citra_id, 'qualified'),
-('Youssif Emad', '01105063763', 'youssifbebo@gmail.com', NULL, 'whatsapp', NULL, NULL, @citra_id, 'new');
+(@citra_id, '/Citra/mplan.jpeg', 'Citra master plan', 'Master Plan', 'masterplan', 'masterplan', 3);

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../../middleware/auth';
 import { amenityService } from '../../services/amenityService';
+import { amenitySchema, updateAmenitySchema } from '../../schemas/validation';
 
 const router = Router();
 router.use(authenticateToken);
@@ -25,20 +26,28 @@ router.get('/categories', async (_req: AuthRequest, res) => {
 
 router.post('/', async (req: AuthRequest, res) => {
   try {
-    const id = await amenityService.create(req.body);
+    const data = amenitySchema.parse(req.body);
+    const id = await amenityService.create(data);
     const amenity = await amenityService.getById(id);
     res.status(201).json(amenity);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation failed', details: error.errors });
+    }
     res.status(500).json({ error: 'Failed to create amenity' });
   }
 });
 
 router.put('/:id', async (req: AuthRequest, res) => {
   try {
-    await amenityService.update(Number(req.params.id), req.body);
+    const data = updateAmenitySchema.parse(req.body);
+    await amenityService.update(Number(req.params.id), data);
     const amenity = await amenityService.getById(Number(req.params.id));
     res.json(amenity);
   } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation failed', details: error.errors });
+    }
     if (error.status) return res.status(error.status).json({ error: error.message });
     res.status(500).json({ error: 'Failed to update amenity' });
   }

@@ -1,9 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  'your-super-secret-jwt-key-change-this-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET must be set in production');
+  }
+  console.warn('JWT_SECRET is not set. Using development-only fallback secret.');
+}
+
+const jwtSecret = JWT_SECRET || 'development-only-jwt-secret';
 
 export interface JwtPayload {
   userId: number;
@@ -13,13 +20,13 @@ export interface JwtPayload {
 
 export function generateToken(payload: JwtPayload): string {
   // @ts-expect-error - JWT library types mismatch
-  return jwt.sign(payload, JWT_SECRET, {
+  return jwt.sign(payload, jwtSecret, {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 }
 
 export function verifyToken(token: string): JwtPayload {
-  return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  return jwt.verify(token, jwtSecret) as JwtPayload;
 }
 
 export interface AuthRequest extends Request {

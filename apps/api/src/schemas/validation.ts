@@ -186,3 +186,41 @@ export const updateProjectSchema = z.object({
 });
 
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+
+export const developerSchema = z.object({
+  slug: slugSchema.optional(),
+  name: z.string().min(1).max(255),
+  description: z.string().optional().or(z.literal('')),
+  headline: z.string().max(255).optional().or(z.literal('')),
+  logoUrl: urlOrLocalPath.optional().or(z.literal('')),
+  showcaseImageUrl: urlOrLocalPath.optional().or(z.literal('')),
+  yearsOfExperience: z.string().max(100).optional().or(z.literal('')),
+  projectsDelivered: z.string().max(100).optional().or(z.literal('')),
+  happyFamilies: z.string().max(100).optional().or(z.literal('')),
+  brandColor: z.string().max(50).optional().or(z.literal('')),
+  contactEmail: z.string().email().optional().or(z.literal('')),
+  contactPhone: z.string().max(50).optional().or(z.literal('')),
+  websiteUrl: z.string().url().optional().or(z.literal('')),
+  socialLinks: z.record(z.string().url().or(z.literal(''))).optional(),
+  seoTitle: z.string().max(255).optional().or(z.literal('')),
+  seoDescription: z.string().max(500).optional().or(z.literal('')),
+});
+
+export const updateDeveloperSchema = developerSchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  'At least one field is required'
+);
+
+export const amenitySchema = z.object({
+  slug: slugSchema.optional(),
+  name: z.string().min(1).max(255),
+  icon: z.string().max(100).optional().or(z.literal('')),
+  category: z.string().max(100).optional().or(z.literal('')),
+  description: z.string().max(1000).optional().or(z.literal('')),
+  isActive: z.boolean().optional(),
+});
+
+export const updateAmenitySchema = amenitySchema.partial().refine(
+  (data) => Object.keys(data).length > 0,
+  'At least one field is required'
+);

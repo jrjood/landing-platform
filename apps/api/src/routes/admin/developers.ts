@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../../middleware/auth';
 import { developerService } from '../../services/developerService';
+import { developerSchema, updateDeveloperSchema } from '../../schemas/validation';
 
 const router = Router();
 router.use(authenticateToken);
@@ -26,19 +27,27 @@ router.get('/:slug', async (req: AuthRequest, res) => {
 
 router.post('/', async (req: AuthRequest, res) => {
   try {
-    const id = await developerService.create(req.body);
+    const data = developerSchema.parse(req.body);
+    const id = await developerService.create(data);
     res.status(201).json({ message: 'Developer created successfully', id });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation failed', details: error.errors });
+    }
     res.status(500).json({ error: 'Failed to create developer' });
   }
 });
 
 router.put('/:slug', async (req: AuthRequest, res) => {
   try {
-    await developerService.update(req.params.slug, req.body);
+    const data = updateDeveloperSchema.parse(req.body);
+    await developerService.update(req.params.slug, data);
     const developer = await developerService.getBySlug(req.params.slug);
     res.json(developer);
   } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: 'Validation failed', details: error.errors });
+    }
     if (error.status) return res.status(error.status).json({ error: error.message });
     res.status(500).json({ error: 'Failed to update developer' });
   }
