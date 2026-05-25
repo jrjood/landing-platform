@@ -13,6 +13,11 @@ interface HeroSectionProps {
 export function HeroSection({ project }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const mobileHero = project.heroImageMobile ?? project.heroImage;
+  const logoAsset = project.media?.find(
+    (asset) => asset.type === 'logo' || asset.category === 'logo'
+  );
+  const projectLogo =
+    logoAsset?.webpUrl || logoAsset?.url || project.developer?.logoUrl;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
@@ -99,14 +104,24 @@ export function HeroSection({ project }: HeroSectionProps) {
       </motion.div>
 
       <div className='relative z-10 container mx-auto px-4 pb-16 pt-28 md:pt-32'>
-        <div className='grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]'>
+        <div className='project-hero__layout grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]'>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className='project-hero__copy text-white'
           >
-            <h1>{project.title}</h1>
+            <div className='project-hero__identity'>
+              {projectLogo && (
+                <>
+                  <span className='project-hero__project-logo'>
+                    <img src={projectLogo} alt={`${project.title} logo`} />
+                  </span>
+                  <span className='project-hero__identity-separator' />
+                </>
+              )}
+              <h1>{project.title}</h1>
+            </div>
 
             <p className='project-hero__subtitle'>{project.subtitle}</p>
 

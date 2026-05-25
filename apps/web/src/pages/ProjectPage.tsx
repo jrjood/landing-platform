@@ -141,10 +141,14 @@ export function ProjectPage({ forcedSlug }: ProjectPageProps) {
       <PageEnter className='project-brochure-page min-h-screen bg-background pb-24 lg:pb-0'>
         <HeroSection project={project} />
         <ProjectDetailsSection project={project} />
+        <PaymentPlanSection project={project} />
         <Location project={project} />
         <MasterPaymentSection project={project} />
-        <PaymentPlanSection project={project} />
-        <GallerySection images={project.gallery} videos={project.videos} project={project} />
+        <GallerySection
+          images={project.gallery}
+          videos={project.videos}
+          project={project}
+        />
         <AboutDeveloperSection project={project} />
         <Footer />
         <StickyLeadBar

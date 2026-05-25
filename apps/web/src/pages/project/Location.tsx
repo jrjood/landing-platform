@@ -209,13 +209,6 @@ export function Location({ project }: LocationProps) {
                 </div>
               </div>
             )}
-
-            {locationText && (
-              <div className='project-location__pin project-location__pin--center'>
-                <p>{project.title}</p>
-                <strong>{locationText}</strong>
-              </div>
-            )}
           </div>
         </div>
       </div>
