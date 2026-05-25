@@ -23,22 +23,22 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className='border-t bg-gradient-to-b from-background to-muted/40'>
+    <footer className='site-footer border-t'>
       <div className='container mx-auto px-4'>
-        <div className='flex items-center justify-between py-8'>
+        <div className='flex flex-col items-center justify-between gap-6 py-9 sm:flex-row'>
           <a
             href='https://wealthholding-eg.com'
             aria-label='Wealth Holding'
-            className='inline-flex w-28 items-center'
+            className='site-footer__brand inline-flex w-28 items-center sm:w-32'
           >
             <img
-              src='/logo1-black.png'
+              src='/logo1-white.png'
               alt='Wealth Holding Developments'
               className='h-full w-full object-contain'
             />
           </a>
 
-          <div className='flex items-center gap-1.5'>
+          <div className='site-footer__socials flex items-center gap-2'>
             {socials.map(({ href, label, path }) => (
               <a
                 key={label}
@@ -46,12 +46,14 @@ export function Footer() {
                 target='_blank'
                 rel='noopener noreferrer'
                 aria-label={label}
-                className='flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:bg-primary/5'
+                title={label}
+                className='site-footer__social-link flex h-10 w-10 items-center justify-center rounded-full'
               >
                 <svg
                   className='h-4 w-4'
                   fill='currentColor'
                   viewBox='0 0 24 24'
+                  aria-hidden='true'
                 >
                   <path d={path} />
                 </svg>
@@ -60,8 +62,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className='border-t py-4'>
-          <div className='flex flex-col gap-2 text-center text-[11px] text-muted-foreground md:flex-row md:items-center md:justify-between md:text-left'>
+        <div className='site-footer__legal py-4'>
+          <div className='flex flex-col gap-2 text-center text-[11px] font-medium uppercase tracking-[0.12em] md:flex-row md:items-center md:justify-between md:text-left'>
             <p>
               &copy; {new Date().getFullYear()} Wealth Holding Developments. All
               rights reserved.

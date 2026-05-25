@@ -1,9 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, X, ChevronLeft, ChevronRight, Film } from 'lucide-react';
 import type { ProjectVideo } from '@/lib/api';
 
-interface VideoGalleryProps { videos?: ProjectVideo[]; }
+interface VideoGalleryProps {
+  videos?: ProjectVideo[];
+  eyebrow?: string;
+  title?: string;
+}
 
 function getEmbedUrl(url: string): string {
   if (!url) return '';
@@ -29,7 +34,7 @@ function getProvider(url: string): 'youtube' | 'facebook' | 'drive' | 'other' {
   return 'other';
 }
 
-const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [] }) => {
+const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [], eyebrow, title }) => {
   const [selected, setSelected] = useState<ProjectVideo | null>(null);
   const [playing, setPlaying] = useState(false);
   const [index, setIndex] = useState(0);
@@ -72,12 +77,25 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [] }) => {
     };
   }, [selected, navigate, close]);
 
+  const renderHeading = (action?: ReactNode) => (
+    <div className='media-reference__heading media-reference__heading--with-action'>
+      <div className='media-reference__title-group'>
+        {eyebrow && <span>{eyebrow}</span>}
+        {title && <h2>{title}</h2>}
+      </div>
+      {action}
+    </div>
+  );
+
   if (!videos.length) {
     return (
-      <div className='media-reference__empty'>
-        <Film className='h-5 w-5' />
-        <span>Videos coming soon</span>
-      </div>
+      <>
+        {renderHeading()}
+        <div className='media-reference__empty'>
+          <Film className='h-5 w-5' />
+          <span>Videos coming soon</span>
+        </div>
+      </>
     );
   }
 
@@ -85,6 +103,16 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [] }) => {
 
   return (
     <>
+      {renderHeading(
+        <button
+          type='button'
+          className='media-reference__outline-button'
+          onClick={() => open(featured)}
+        >
+          Watch Full Video
+        </button>,
+      )}
+
       <div className='video-reference'>
         <motion.button
           initial={{ opacity: 0, y: 10 }}
@@ -114,16 +142,6 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos = [] }) => {
             </div>
           </div>
         </motion.button>
-
-        <div className='media-reference__actions'>
-          <button
-            type='button'
-            className='media-reference__outline-button'
-            onClick={() => open(featured)}
-          >
-            Watch Full Video
-          </button>
-        </div>
       </div>
 
       {/* Modal */}

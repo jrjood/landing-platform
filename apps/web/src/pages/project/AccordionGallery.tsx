@@ -1,12 +1,15 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight, X, Image } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AccordionGalleryProps {
   images: { url: string; alt: string }[];
+  eyebrow?: string;
+  title?: string;
 }
 
-export function AccordionGallery({ images }: AccordionGalleryProps) {
+export function AccordionGallery({ images, eyebrow, title }: AccordionGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -93,17 +96,40 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
     el.style.cursor = 'grab';
   }, []);
 
+  const renderHeading = (action?: ReactNode) => (
+    <div className='media-reference__heading media-reference__heading--with-action'>
+      <div className='media-reference__title-group'>
+        {eyebrow && <span>{eyebrow}</span>}
+        {title && <h2>{title}</h2>}
+      </div>
+      {action}
+    </div>
+  );
+
   if (!images.length) {
     return (
-      <div className='media-reference__empty'>
-        <Image className='h-5 w-5' />
-        <span>Photos coming soon</span>
-      </div>
+      <>
+        {renderHeading()}
+        <div className='media-reference__empty'>
+          <Image className='h-5 w-5' />
+          <span>Photos coming soon</span>
+        </div>
+      </>
     );
   }
 
   return (
     <>
+      {renderHeading(
+        <button
+          type='button'
+          className='media-reference__outline-button'
+          onClick={() => openLightbox(0)}
+        >
+          View All Photos
+        </button>,
+      )}
+
       <div className='video-reference__preview overflow-hidden'>
         <div className='relative h-full w-full'>
           <div className='pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-black/10 to-transparent' />
@@ -160,16 +186,6 @@ export function AccordionGallery({ images }: AccordionGalleryProps) {
             </>
           )}
         </div>
-      </div>
-
-      <div className='media-reference__actions'>
-        <button
-          type='button'
-          className='media-reference__outline-button'
-          onClick={() => openLightbox(0)}
-        >
-          View All Photos
-        </button>
       </div>
 
       {/* Lightbox */}

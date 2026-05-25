@@ -14,21 +14,11 @@ export function GallerySection({ images, project, videos = [] }: GallerySectionP
       <div className='container mx-auto px-4'>
         <div className='media-reference__grid'>
           <div className='media-reference__panel media-reference__panel--gallery'>
-            <div className='media-reference__heading'>
-              <span>Gallery</span>
-              <h2>Explore the Beauty</h2>
-            </div>
-
-            <AccordionGallery images={images} />
+            <AccordionGallery images={images} eyebrow='Gallery' title='Explore the Beauty' />
           </div>
 
           <div className='media-reference__panel media-reference__panel--video'>
-            <div className='media-reference__heading'>
-              <span>Video</span>
-              <h2>Experience {project.title}</h2>
-            </div>
-
-            <VideoGallery videos={videos} />
+            <VideoGallery videos={videos} eyebrow='Video' title={`Experience ${project.title}`} />
           </div>
         </div>
       </div>
